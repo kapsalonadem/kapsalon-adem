@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kapsalon Adem - Professional Barbershop Rotterdam</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="language-selector">
+        <button class="current-lang">
+            <img src="https://flagcdn.com/w40/gb.png" alt="English" class="lang-flag">
+            <span>EN</span>
+        </button>
+        <ul class="lang-dropdown">
+            <li data-lang="en" class="active">
+                <img src="https://flagcdn.com/w40/gb.png" alt="English" class="lang-flag">
+                <span>English</span>
+            </li>
+            <li data-lang="nl">
+                <img src="https://flagcdn.com/w40/nl.png" alt="Dutch" class="lang-flag">
+                <span>Nederlands</span>
+            </li>
+        </ul>
+    </div>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-cut"></i>
+                <span>Kapsalon Adem</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" data-i18n="nav.home">Home</a></li>
+                <li><a href="#services" data-i18n="nav.services">Services</a></li>
+                <li><a href="#staff" data-i18n="nav.staff">Our Team</a></li>
+                <li><a href="#booking" class="booking-btn" data-i18n="nav.booking">Book Now</a></li>
+                <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <header id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 data-i18n="hero.welcome">Welcome to Kapsalon Adem</h1>
+                <p data-i18n="hero.subtitle">Professional Haircare for Men in Rotterdam</p>
+                <a href="#booking" class="cta-button" data-i18n="hero.bookNow">Book Now</a>
+            </div>
+        </div>
+    </header>
+
+    <section id="services" class="services">
+        <div class="container">
+            <h2 data-i18n="services.title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <i class="fas fa-scissors"></i>
+                    <h3 data-i18n="services.haircut.title">Men's Haircut</h3>
+                    <p data-i18n="services.haircut.description">Complete haircut with consultation</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-razor"></i>
+                    <h3 data-i18n="services.beard.title">Beard Trimming</h3>
+                    <p data-i18n="services.beard.description">Professional beard grooming</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-spray-can"></i>
+                    <h3 data-i18n="services.styling.title">Styling</h3>
+                    <p data-i18n="services.styling.description">Hair styling and finishing</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="staff" class="staff">
+        <div class="container">
+            <h2 data-i18n="staff.title">Our Team</h2>
+            <div class="staff-grid">
+                <div class="staff-card">
+                    <i class="fas fa-user-circle"></i>
+                    <h3>Hasan</h3>
+                    <p data-i18n="staff.position">Master Barber</p>
+                    <a href="tel:+31687347940">+31 6 8734 7940</a>
+                </div>
+                <div class="staff-card">
+                    <i class="fas fa-user-circle"></i>
+                    <h3>Adem</h3>
+                    <p data-i18n="staff.position">Master Barber</p>
+                    <a href="tel:+31684262200">+31 6 8426 2200</a>
+                </div>
+                <div class="staff-card">
+                    <i class="fas fa-user-circle"></i>
+                    <h3>Abdullah</h3>
+                    <p data-i18n="staff.position">Master Barber</p>
+                    <a href="tel:+31614627757">+31 6 1462 7757</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="booking" class="booking">
+        <div class="container">
+            <h2 data-i18n="booking.title">Online Booking</h2>
+            <div class="booking-form">
+                <form id="appointmentForm">
+                    <div class="form-group">
+                        <label for="service" data-i18n="booking.form.service">Choose Service</label>
+                        <select id="service" required>
+                            <option value="" data-i18n="booking.form.selectService">Select a service</option>
+                            <option value="haircut" data-i18n="services.haircut.title">Men's Haircut</option>
+                            <option value="beard" data-i18n="services.beard.title">Beard Trimming</option>
+                            <option value="combo">Haircut & Beard</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="barber">Barber</label>
+                        <select id="barber" required>
+                            <option value="">Select barber</option>
+                            <option value="Hasan">Hasan</option>
+                            <option value="Adem">Adem</option>
+                            <option value="Abdullah">Abdullah</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date" data-i18n="booking.form.date">Date</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="time" data-i18n="booking.form.time">Time</label>
+                        <select id="time" required>
+                            <option value="" data-i18n="booking.form.selectTime">Select time</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" data-i18n="booking.form.name">Name</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" data-i18n="booking.form.email">Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" data-i18n="booking.form.phone">Phone</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                    <button type="submit" class="submit-btn" data-i18n="booking.form.submit">Confirm Appointment</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 data-i18n="contact.title">Contact & Location</h2>
+            <div class="contact-info">
+                <div class="info-card">
+                    <i class="fas fa-clock"></i>
+                    <h3 data-i18n="contact.hours.title">Opening Hours</h3>
+                    <p data-i18n="contact.hours.schedule">Monday - Sunday: 09:00 - 17:30</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-phone"></i>
+                    <h3 data-i18n="contact.contact.title">Contact</h3>
+                    <p>Hasan: <a href="tel:+31687347940">+31 6 8734 7940</a></p>
+                    <p>Adem: <a href="tel:+31684262200">+31 6 8426 2200</a></p>
+                    <p>Abdullah: <a href="tel:+31614627757">+31 6 1462 7757</a></p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3 data-i18n="contact.address.title">Address</h3>
+                    <p>Dortselaan 44/A-3073-6D</p>
+                    <p>Rotterdam</p>
+                    <a href="https://maps.google.com/?q=Dortselaan+44/A,+3073+GN+Rotterdam" target="_blank" class="directions-link" data-i18n="contact.address.getDirections">Get Directions</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-cut"></i>
+                    <span>Kapsalon Adem</span>
+                </div>
+                <p>&copy; 2024 Kapsalon Adem. <span data-i18n="footer.rights">All rights reserved</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="translations.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
