@@ -45,7 +45,8 @@ function initializeBookingSystem() {
     dateInput.value = tomorrow.toISOString().split('T')[0];
 
     // Disable weekends
-    dateInput.addEventListener('input', function(e) {
+    dateInput.addEventListener('change', function(e) {
+        console.log('Date changed:', this.value);
         const selectedDate = new Date(this.value);
         const day = selectedDate.getDay();
         
@@ -57,6 +58,7 @@ function initializeBookingSystem() {
         }
 
         if (barberSelect.value) {
+            console.log('Calling generateTimeSlots from date change');
             generateTimeSlots();
         }
     });
@@ -64,6 +66,7 @@ function initializeBookingSystem() {
     barberSelect.addEventListener('change', function() {
         console.log('Barber changed:', this.value);
         if (dateInput.value) {
+            console.log('Calling generateTimeSlots from barber change');
             generateTimeSlots();
         }
     });
@@ -75,6 +78,7 @@ function initializeBookingSystem() {
 
     // Initialize time slots if both date and barber are selected
     if (dateInput.value && barberSelect.value) {
+        console.log('Initial call to generateTimeSlots');
         generateTimeSlots();
     }
 }
@@ -93,13 +97,13 @@ async function generateTimeSlots() {
     const selectedDate = dateInput.value;
     const selectedBarber = barberSelect.value;
 
+    console.log('Selected date:', selectedDate);
+    console.log('Selected barber:', selectedBarber);
+
     if (!selectedDate || !selectedBarber) {
         console.error('Date or barber not selected');
         return;
     }
-
-    console.log('Selected date:', selectedDate);
-    console.log('Selected barber:', selectedBarber);
 
     // Show loading state
     timeSelect.disabled = true;
@@ -112,17 +116,23 @@ async function generateTimeSlots() {
 
     try {
         // Get booked appointments
-        const response = await fetch(`https://kapsalon-adem.onrender.com/api/appointments/${selectedDate}`);
+        const url = `https://kapsalon-adem.onrender.com/api/appointments/${selectedDate}`;
+        console.log('Fetching appointments from:', url);
+        
+        const response = await fetch(url);
+        console.log('Server response:', response);
+        
         let bookedAppointments = [];
         
         if (response.ok) {
             const data = await response.json();
+            console.log('Server data:', data);
             if (Array.isArray(data)) {
                 bookedAppointments = data;
             }
         }
         
-        console.log('Booked appointments:', bookedAppointments);
+        console.log('Processed booked appointments:', bookedAppointments);
 
         // Clear and re-enable select
         timeSelect.disabled = false;
@@ -141,6 +151,8 @@ async function generateTimeSlots() {
                 apt.barber === selectedBarber
             );
 
+            console.log(`Time slot ${timeString} is ${isBooked ? 'booked' : 'available'}`);
+
             if (!isBooked) {
                 const option = document.createElement('option');
                 option.value = timeString;
@@ -149,6 +161,8 @@ async function generateTimeSlots() {
                 availableSlots++;
             }
         }
+
+        console.log('Total available slots:', availableSlots);
 
         // If no slots are available, show message
         if (availableSlots === 0) {
