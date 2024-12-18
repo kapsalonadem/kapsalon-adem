@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeBookingSystem() {
     const timeSelect = document.getElementById('time');
     const dateInput = document.getElementById('date');
+    const barberSelect = document.getElementById('barber');
     const form = document.getElementById('appointmentForm');
 
     // Set minimum date to today
@@ -26,9 +27,16 @@ function initializeBookingSystem() {
     tomorrow.setDate(tomorrow.getDate() + 1);
     dateInput.min = tomorrow.toISOString().split('T')[0];
 
-    // Generate time slots
+    // Generate time slots when date changes
     dateInput.addEventListener('change', function() {
         generateTimeSlots();
+    });
+
+    // Generate time slots when barber changes
+    barberSelect.addEventListener('change', function() {
+        if (dateInput.value) {
+            generateTimeSlots();
+        }
     });
 
     form.addEventListener('submit', function(e) {
