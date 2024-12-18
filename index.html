@@ -10,18 +10,18 @@
 </head>
 <body>
     <div class="language-selector">
-        <button class="current-lang">
-            <img src="https://flagcdn.com/w40/gb.png" alt="English" class="lang-flag">
-            <span>EN</span>
+        <button class="language-switch current-lang">
+            <img src="https://flagcdn.com/w40/nl.png" alt="Nederlands" class="lang-flag">
+            <span>NL</span>
         </button>
         <ul class="lang-dropdown">
-            <li data-lang="en" class="active">
+            <li data-lang="nl" class="active">
+                <img src="https://flagcdn.com/w40/nl.png" alt="Nederlands" class="lang-flag">
+                <span>Nederlands</span>
+            </li>
+            <li data-lang="en">
                 <img src="https://flagcdn.com/w40/gb.png" alt="English" class="lang-flag">
                 <span>English</span>
-            </li>
-            <li data-lang="nl">
-                <img src="https://flagcdn.com/w40/nl.png" alt="Dutch" class="lang-flag">
-                <span>Nederlands</span>
             </li>
         </ul>
     </div>
@@ -30,14 +30,14 @@
         <div class="container">
             <div class="logo">
                 <i class="fas fa-cut"></i>
-                <span>Kapsalon Adem</span>
+                <span data-translate="nav.logo">Kapsalon Adem</span>
             </div>
             <ul class="nav-links">
-                <li><a href="#home" data-i18n="nav.home">Home</a></li>
-                <li><a href="#services" data-i18n="nav.services">Services</a></li>
-                <li><a href="#staff" data-i18n="nav.staff">Our Team</a></li>
-                <li><a href="#booking" class="booking-btn" data-i18n="nav.booking">Book Now</a></li>
-                <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+                <li><a href="#home" data-translate="nav.home">Home</a></li>
+                <li><a href="#services" data-translate="nav.services">Diensten</a></li>
+                <li><a href="#staff" data-translate="nav.staff">Ons Team</a></li>
+                <li><a href="#booking" class="booking-btn" data-translate="nav.booking">Afspraak Maken</a></li>
+                <li><a href="#contact" data-translate="nav.contact">Contact</a></li>
             </ul>
             <div class="hamburger">
                 <span></span>
@@ -50,9 +50,9 @@
     <header id="home" class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1 data-i18n="hero.welcome">Welcome to Kapsalon Adem</h1>
-                <p data-i18n="hero.subtitle">Professional Haircare for Men in Rotterdam</p>
-                <a href="#booking" class="cta-button" data-i18n="hero.bookNow">Book Now</a>
+                <h1 data-translate="hero.welcome">Welkom bij Kapsalon Adem</h1>
+                <p data-translate="hero.subtitle">Professionele haarverzorging voor heren in Rotterdam</p>
+                <a href="#booking" class="cta-button" data-translate="hero.bookNow">Maak Nu een Afspraak</a>
             </div>
         </div>
     </header>

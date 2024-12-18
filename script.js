@@ -7,6 +7,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle smooth scrolling
     initializeSmoothScroll();
+
+    // Initialize language switching
+    initializeLanguageSwitch();
+    
+    // Initialize language selector
+    initializeLanguageSelector();
 });
 
 function initializeBookingSystem() {
@@ -52,20 +58,57 @@ function generateTimeSlots() {
     }
 }
 
-function handleBookingSubmission() {
+async function handleBookingSubmission() {
     const formData = {
         service: document.getElementById('service').value,
         date: document.getElementById('date').value,
         time: document.getElementById('time').value,
         name: document.getElementById('name').value,
         email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value
+        phone: document.getElementById('phone').value,
+        barber: document.getElementById('barber').value
     };
 
-    // Here you would typically send this data to your backend
-    // For now, we'll just show a success message
-    alert('Bedankt voor uw reservering! We nemen zo spoedig mogelijk contact met u op voor bevestiging.');
-    document.getElementById('appointmentForm').reset();
+    try {
+        // First check availability
+        const availabilityResponse = await fetch('/api/check-availability', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                date: formData.date,
+                time: formData.time,
+                barber: formData.barber
+            }),
+        });
+
+        const availabilityData = await availabilityResponse.json();
+
+        if (!availabilityData.available) {
+            alert('Deze tijd is helaas niet meer beschikbaar. Kies alstublieft een andere tijd.');
+            return;
+        }
+
+        // If available, create the appointment
+        const response = await fetch('/api/appointments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+            alert('Bedankt voor uw reservering! U ontvangt binnen enkele minuten een bevestigingsmail.');
+            document.getElementById('appointmentForm').reset();
+        } else {
+            alert('Er is een fout opgetreden bij het maken van de afspraak. Probeer het later opnieuw.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Er is een fout opgetreden bij het maken van de afspraak. Probeer het later opnieuw.');
+    }
 }
 
 function initializeMobileMenu() {
@@ -90,6 +133,85 @@ function initializeSmoothScroll() {
                 });
             }
         });
+    });
+}
+
+// Language switching functionality
+let currentLanguage = localStorage.getItem('language') || 'nl';
+
+function initializeLanguageSwitch() {
+    const languageSwitch = document.querySelector('.language-switch');
+    if (languageSwitch) {
+        languageSwitch.addEventListener('click', toggleLanguage);
+        updateContent(currentLanguage);
+    }
+}
+
+function toggleLanguage() {
+    currentLanguage = currentLanguage === 'nl' ? 'en' : 'nl';
+    localStorage.setItem('language', currentLanguage);
+    updateContent(currentLanguage);
+}
+
+function updateContent(lang) {
+    const elements = document.querySelectorAll('[data-translate]');
+    elements.forEach(element => {
+        const key = element.dataset.translate;
+        const keys = key.split('.');
+        let translation = translations[lang];
+        keys.forEach(k => {
+            translation = translation[k];
+        });
+        if (translation) {
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.placeholder = translation;
+            } else {
+                element.textContent = translation;
+            }
+        }
+    });
+}
+
+// Language selector functionality
+function initializeLanguageSelector() {
+    const languageSelector = document.querySelector('.language-selector');
+    const currentLang = languageSelector.querySelector('.current-lang');
+    const dropdown = languageSelector.querySelector('.lang-dropdown');
+    const dropdownItems = languageSelector.querySelectorAll('.lang-dropdown li');
+
+    // Toggle dropdown
+    currentLang.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('show');
+    });
+
+    // Handle language selection
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const lang = item.getAttribute('data-lang');
+            const flag = item.querySelector('img').src;
+            const text = lang.toUpperCase();
+
+            // Update current language button
+            currentLang.querySelector('img').src = flag;
+            currentLang.querySelector('span').textContent = text;
+
+            // Update active state
+            dropdownItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+
+            // Hide dropdown
+            dropdown.classList.remove('show');
+
+            // Update content
+            toggleLanguage();
+        });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', () => {
+        dropdown.classList.remove('show');
     });
 }
 

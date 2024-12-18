@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 const moment = require('moment');
 
 const app = express();
@@ -15,6 +15,9 @@ app.use(express.static('public'));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/kapsalon-adem');
+
+// Initialize SendGrid
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // Appointment Schema
 const appointmentSchema = new mongoose.Schema({
@@ -37,15 +40,6 @@ const appointmentSchema = new mongoose.Schema({
 });
 
 const Appointment = mongoose.model('Appointment', appointmentSchema);
-
-// Email configuration
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
 
 // Check availability
 app.post('/api/check-availability', async (req, res) => {
@@ -72,9 +66,9 @@ app.post('/api/appointments', async (req, res) => {
         await appointment.save();
 
         // Send confirmation email to customer
-        const customerMailOptions = {
-            from: process.env.EMAIL_USER,
+        const customerMsg = {
             to: appointment.email,
+            from: process.env.FROM_EMAIL,
             subject: 'Afspraakbevestiging - Kapsalon Adem',
             html: `
                 <h2>Bedankt voor uw afspraak bij Kapsalon Adem</h2>
@@ -96,20 +90,17 @@ app.post('/api/appointments', async (req, res) => {
         };
 
         // Send notification email to salon
-        const salonMailOptions = {
-            from: process.env.EMAIL_USER,
+        const salonMsg = {
             to: process.env.SALON_EMAIL,
-            subject: 'Nieuwe Afspraak',
+            from: process.env.FROM_EMAIL,
+            subject: 'Nieuwe Afspraak - Kapsalon Adem',
             html: `
                 <h2>Nieuwe afspraak gemaakt</h2>
-                <p>Klantgegevens:</p>
+                <p>Afspraakdetails:</p>
                 <ul>
                     <li>Naam: ${appointment.name}</li>
                     <li>Email: ${appointment.email}</li>
                     <li>Telefoon: ${appointment.phone}</li>
-                </ul>
-                <p>Afspraakdetails:</p>
-                <ul>
                     <li>Datum: ${moment(appointment.date).format('DD-MM-YYYY')}</li>
                     <li>Tijd: ${appointment.time}</li>
                     <li>Service: ${appointment.service}</li>
@@ -118,11 +109,15 @@ app.post('/api/appointments', async (req, res) => {
             `
         };
 
-        await transporter.sendMail(customerMailOptions);
-        await transporter.sendMail(salonMailOptions);
+        // Send both emails
+        await Promise.all([
+            sgMail.send(customerMsg),
+            sgMail.send(salonMsg)
+        ]);
 
-        res.status(201).json(appointment);
+        res.status(201).json({ message: 'Appointment created successfully', appointment });
     } catch (error) {
+        console.error('Error:', error);
         res.status(500).json({ error: 'Error creating appointment' });
     }
 });
@@ -145,5 +140,5 @@ app.get('/api/appointments/:date', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
