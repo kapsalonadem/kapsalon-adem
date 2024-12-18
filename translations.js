@@ -26,6 +26,9 @@ const translations = {
             styling: {
                 title: "Styling",
                 description: "Hair styling and finishing"
+            },
+            combo: {
+                title: "Haircut & Beard"
             }
         },
         staff: {
@@ -34,19 +37,25 @@ const translations = {
         },
         booking: {
             title: "Online Booking",
-            success: "Appointment confirmed! Check your email for details.",
-            error: "Error creating appointment. Please try again.",
+            weekendAlert: "Please select a weekday. We are closed on weekends.",
             form: {
                 service: "Choose Service",
                 selectService: "Select a service",
+                barber: "Choose Barber",
+                selectBarber: "Select a barber",
                 date: "Date",
                 time: "Time",
                 selectTime: "Select time",
+                noTimeSlots: "No available time slots",
+                errorLoading: "Error loading time slots",
                 name: "Name",
                 email: "Email",
                 phone: "Phone",
-                submit: "Confirm Appointment"
-            }
+                submit: "Book Appointment"
+            },
+            success: "Appointment confirmed! Check your email for details.",
+            error: "Error creating appointment. Please try again.",
+            timeNotAvailable: "This time slot is no longer available. Please choose another time."
         },
         contact: {
             title: "Contact & Location",
@@ -93,6 +102,9 @@ const translations = {
             styling: {
                 title: "Styling",
                 description: "Haar styling en finishing"
+            },
+            combo: {
+                title: "Kapsel & Baard"
             }
         },
         staff: {
@@ -100,20 +112,26 @@ const translations = {
             position: "Meester Kapper"
         },
         booking: {
-            title: "Online Reserveren",
-            success: "Afspraak bevestigd! Controleer uw e-mail voor details.",
-            error: "Fout bij het maken van de afspraak. Probeer het opnieuw.",
+            title: "Online Afspraak Maken",
+            weekendAlert: "Selecteer een werkdag. We zijn in het weekend gesloten.",
             form: {
                 service: "Kies Dienst",
                 selectService: "Selecteer een dienst",
+                barber: "Kies Kapper",
+                selectBarber: "Selecteer een kapper",
                 date: "Datum",
                 time: "Tijd",
                 selectTime: "Selecteer tijd",
+                noTimeSlots: "Geen beschikbare tijden",
+                errorLoading: "Fout bij het laden van tijden",
                 name: "Naam",
-                email: "Email",
+                email: "E-mail",
                 phone: "Telefoon",
-                submit: "Bevestig Afspraak"
-            }
+                submit: "Afspraak Maken"
+            },
+            success: "Afspraak bevestigd! Controleer uw e-mail voor details.",
+            error: "Fout bij het maken van de afspraak. Probeer het opnieuw.",
+            timeNotAvailable: "Deze tijd is niet meer beschikbaar. Kies een andere tijd."
         },
         contact: {
             title: "Contact & Locatie",

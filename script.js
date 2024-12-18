@@ -30,15 +30,32 @@ function initializeBookingSystem() {
         return;
     }
 
-    // Set minimum date to today
+    // Set minimum date to today and maximum date to 3 months from now
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    dateInput.min = tomorrow.toISOString().split('T')[0];
+    const threeMonthsFromNow = new Date(today);
+    threeMonthsFromNow.setMonth(today.getMonth() + 3);
 
-    // Add event listeners
-    dateInput.addEventListener('change', function() {
-        console.log('Date changed:', this.value);
+    // Format dates for the input
+    dateInput.min = tomorrow.toISOString().split('T')[0];
+    dateInput.max = threeMonthsFromNow.toISOString().split('T')[0];
+
+    // Set default value to tomorrow
+    dateInput.value = tomorrow.toISOString().split('T')[0];
+
+    // Disable weekends
+    dateInput.addEventListener('input', function(e) {
+        const selectedDate = new Date(this.value);
+        const day = selectedDate.getDay();
+        
+        // If weekend (0 = Sunday, 6 = Saturday)
+        if(day === 0 || day === 6) {
+            alert(translations[currentLanguage].booking.weekendAlert || 'Please select a weekday. We are closed on weekends.');
+            this.value = ''; // Clear the invalid date
+            return;
+        }
+
         if (barberSelect.value) {
             generateTimeSlots();
         }
@@ -51,7 +68,15 @@ function initializeBookingSystem() {
         }
     });
 
-    form.addEventListener('submit', handleBookingSubmission);
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        handleBookingSubmission();
+    });
+
+    // Initialize time slots if both date and barber are selected
+    if (dateInput.value && barberSelect.value) {
+        generateTimeSlots();
+    }
 }
 
 async function generateTimeSlots() {
@@ -68,11 +93,17 @@ async function generateTimeSlots() {
     const selectedDate = dateInput.value;
     const selectedBarber = barberSelect.value;
 
+    if (!selectedDate || !selectedBarber) {
+        console.error('Date or barber not selected');
+        return;
+    }
+
     console.log('Selected date:', selectedDate);
     console.log('Selected barber:', selectedBarber);
 
-    // Clear existing options
-    timeSelect.innerHTML = '<option value="" data-translate="booking.form.selectTime">Select time</option>';
+    // Show loading state
+    timeSelect.disabled = true;
+    timeSelect.innerHTML = '<option value="">Loading...</option>';
 
     // Generate time slots from 09:00 to 17:30 with 30-minute intervals
     const startTime = 9 * 60; // 09:00 in minutes
@@ -85,6 +116,10 @@ async function generateTimeSlots() {
         const bookedAppointments = response.ok ? await response.json() : [];
         
         console.log('Booked appointments:', bookedAppointments);
+
+        // Clear and re-enable select
+        timeSelect.disabled = false;
+        timeSelect.innerHTML = '<option value="" data-translate="booking.form.selectTime">Select time</option>';
 
         // Generate all possible time slots
         for (let time = startTime; time <= endTime - interval; time += interval) {
@@ -114,13 +149,14 @@ async function generateTimeSlots() {
             option.textContent = translations[currentLanguage].booking.form.noTimeSlots || 'No available time slots';
             timeSelect.appendChild(option);
         }
+
+        // Update translations
+        updateContent(currentLanguage);
     } catch (error) {
         console.error('Error fetching appointments:', error);
-        const option = document.createElement('option');
-        option.value = "";
-        option.disabled = true;
-        option.textContent = translations[currentLanguage].booking.form.errorTimeSlots || 'Error loading time slots';
-        timeSelect.appendChild(option);
+        timeSelect.disabled = false;
+        timeSelect.innerHTML = '<option value="" data-translate="booking.form.errorLoading">Error loading time slots</option>';
+        updateContent(currentLanguage);
     }
 }
 
