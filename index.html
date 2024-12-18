@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -8,6 +8,7 @@
     <title>Kapsalon Adem - Professional Barbershop Rotterdam</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -15,6 +16,7 @@
         <button class="language-switch">
             <img src="https://flagcdn.com/w40/nl.png" alt="Nederlands" class="lang-flag">
             <span>NL</span>
+            <i class="fas fa-chevron-down"></i>
         </button>
         <ul class="lang-dropdown">
             <li data-lang="nl" class="active">
@@ -24,6 +26,10 @@
             <li data-lang="en">
                 <img src="https://flagcdn.com/w40/gb.png" alt="English" class="lang-flag">
                 <span>English</span>
+            </li>
+            <li data-lang="tr">
+                <img src="https://flagcdn.com/w40/tr.png" alt="Türkçe" class="lang-flag">
+                <span>Türkçe</span>
             </li>
         </ul>
     </div>
@@ -43,40 +49,52 @@
                 <li><a href="#home" data-translate="nav.home">Home</a></li>
                 <li><a href="#services" data-translate="nav.services">Services</a></li>
                 <li><a href="#staff" data-translate="nav.staff">Staff</a></li>
-                <li><a href="#booking" data-translate="nav.booking">Book Now</a></li>
+                <li><a href="#booking" class="booking-btn" data-translate="nav.booking">Book Now</a></li>
                 <li><a href="#contact" data-translate="nav.contact">Contact</a></li>
             </ul>
         </div>
     </nav>
 
-    <header id="home" class="hero">
+    <section id="home" class="hero">
         <div class="container">
-            <div class="hero-content">
-                <h1 data-translate="hero.welcome">Welkom bij Kapsalon Adem</h1>
-                <p data-translate="hero.subtitle">Professionele haarverzorging voor heren in Rotterdam</p>
-                <a href="#booking" class="cta-button" data-translate="hero.bookNow">Maak Nu een Afspraak</a>
+            <div class="hero-content" data-aos="fade-up">
+                <h1 data-translate="hero.title">Welcome to Adem Barbershop</h1>
+                <p data-translate="hero.subtitle">Professional Barbershop in Rotterdam</p>
+                <a href="#booking" class="cta-button" data-translate="hero.cta">Book Appointment</a>
             </div>
         </div>
-    </header>
+    </section>
 
     <section id="services" class="services">
         <div class="container">
-            <h2 data-translate="services.title">Our Services</h2>
+            <div class="section-header" data-aos="fade-up">
+                <h2 data-translate="services.title">Our Services</h2>
+                <p data-translate="services.subtitle">Professional service at competitive prices</p>
+            </div>
             <div class="services-grid">
-                <div class="service-card">
-                    <i class="fas fa-scissors"></i>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                    <i class="fas fa-cut"></i>
                     <h3 data-translate="services.haircut.title">Men's Haircut</h3>
-                    <p data-translate="services.haircut.description">Complete haircut with consultation</p>
+                    <p data-translate="services.haircut.description">Stylish custom haircut</p>
+                    <span class="price" data-translate="services.haircut.price">€25</span>
                 </div>
-                <div class="service-card">
+                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
                     <i class="fas fa-razor"></i>
                     <h3 data-translate="services.beard.title">Beard Trimming</h3>
-                    <p data-translate="services.beard.description">Professional beard grooming</p>
+                    <p data-translate="services.beard.description">Perfect beard styling</p>
+                    <span class="price" data-translate="services.beard.price">€15</span>
                 </div>
-                <div class="service-card">
-                    <i class="fas fa-spray-can"></i>
-                    <h3 data-translate="services.styling.title">Styling</h3>
-                    <p data-translate="services.styling.description">Hair styling and finishing</p>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+                    <i class="fas fa-user-tie"></i>
+                    <h3 data-translate="services.combo.title">Haircut & Beard</h3>
+                    <p data-translate="services.combo.description">Complete look</p>
+                    <span class="price" data-translate="services.combo.price">€35</span>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="400">
+                    <i class="fas fa-child"></i>
+                    <h3 data-translate="services.kids.title">Kids</h3>
+                    <p data-translate="services.kids.description">Children's haircut</p>
+                    <span class="price" data-translate="services.kids.price">€20</span>
                 </div>
             </div>
         </div>
@@ -84,25 +102,58 @@
 
     <section id="staff" class="staff">
         <div class="container">
-            <h2 data-translate="staff.title">Our Team</h2>
+            <div class="section-header" data-aos="fade-up">
+                <h2 data-translate="staff.title">Our Team</h2>
+                <p data-translate="staff.subtitle">Experienced barbers at your service</p>
+            </div>
             <div class="staff-grid">
-                <div class="staff-card">
-                    <i class="fas fa-user-circle"></i>
-                    <h3>Hasan</h3>
-                    <p data-translate="staff.position">Master Barber</p>
-                    <a href="tel:+31687347940">+31 6 8734 7940</a>
+                <div class="staff-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="staff-image">
+                        <img src="https://placehold.co/400x500" alt="Adem">
+                        <div class="staff-overlay">
+                            <div class="staff-social">
+                                <a href="#"><i class="fab fa-instagram"></i></a>
+                                <a href="#"><i class="fab fa-facebook"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="staff-info">
+                        <h3 data-translate="staff.barbers.adem.name">Adem</h3>
+                        <p class="role" data-translate="staff.barbers.adem.role">Owner & Master Barber</p>
+                        <p class="description" data-translate="staff.barbers.adem.description">15+ years experience</p>
+                    </div>
                 </div>
-                <div class="staff-card">
-                    <i class="fas fa-user-circle"></i>
-                    <h3>Adem</h3>
-                    <p data-translate="staff.position">Master Barber</p>
-                    <a href="tel:+31684262200">+31 6 8426 2200</a>
+                <div class="staff-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="staff-image">
+                        <img src="https://placehold.co/400x500" alt="Hasan">
+                        <div class="staff-overlay">
+                            <div class="staff-social">
+                                <a href="#"><i class="fab fa-instagram"></i></a>
+                                <a href="#"><i class="fab fa-facebook"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="staff-info">
+                        <h3 data-translate="staff.barbers.hasan.name">Hasan</h3>
+                        <p class="role" data-translate="staff.barbers.hasan.role">Senior Barber</p>
+                        <p class="description" data-translate="staff.barbers.hasan.description">10+ years experience</p>
+                    </div>
                 </div>
-                <div class="staff-card">
-                    <i class="fas fa-user-circle"></i>
-                    <h3>Abdullah</h3>
-                    <p data-translate="staff.position">Master Barber</p>
-                    <a href="tel:+31614627757">+31 6 1462 7757</a>
+                <div class="staff-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="staff-image">
+                        <img src="https://placehold.co/400x500" alt="Abdullah">
+                        <div class="staff-overlay">
+                            <div class="staff-social">
+                                <a href="#"><i class="fab fa-instagram"></i></a>
+                                <a href="#"><i class="fab fa-facebook"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="staff-info">
+                        <h3 data-translate="staff.barbers.abdullah.name">Abdullah</h3>
+                        <p class="role" data-translate="staff.barbers.abdullah.role">Barber</p>
+                        <p class="description" data-translate="staff.barbers.abdullah.description">5+ years experience</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -110,50 +161,136 @@
 
     <section id="booking" class="booking">
         <div class="container">
-            <h2 data-translate="booking.title">Online Booking</h2>
-            <div class="booking-form">
-                <form id="appointmentForm">
-                    <div class="form-group">
-                        <label for="service" data-translate="booking.form.service">Choose Service</label>
-                        <select id="service" required>
-                            <option value="" data-translate="booking.form.selectService">Select a service</option>
-                            <option value="haircut" data-translate="services.haircut.title">Men's Haircut</option>
-                            <option value="beard" data-translate="services.beard.title">Beard Trimming</option>
-                            <option value="combo" data-translate="services.combo.title">Haircut & Beard</option>
-                        </select>
+            <div class="section-header" data-aos="fade-up">
+                <h2 data-translate="booking.title">Online Booking</h2>
+                <p data-translate="booking.subtitle">Choose your preferred time and barber</p>
+            </div>
+            <div class="booking-container" data-aos="fade-up">
+                <div class="booking-steps">
+                    <div class="step active" data-step="1">
+                        <span class="step-number">1</span>
+                        <span class="step-text" data-translate="booking.form.service">Service</span>
                     </div>
-                    <div class="form-group">
-                        <label for="barber" data-translate="booking.form.barber">Choose Barber</label>
-                        <select id="barber" required>
-                            <option value="" data-translate="booking.form.selectBarber">Select a barber</option>
-                            <option value="Hasan">Hasan</option>
-                            <option value="Adem">Adem</option>
-                            <option value="Abdullah">Abdullah</option>
-                        </select>
+                    <div class="step" data-step="2">
+                        <span class="step-number">2</span>
+                        <span class="step-text" data-translate="booking.form.barber">Barber</span>
                     </div>
-                    <div class="form-group">
-                        <label for="date" data-translate="booking.form.date">Date</label>
-                        <input type="date" id="date" required>
+                    <div class="step" data-step="3">
+                        <span class="step-number">3</span>
+                        <span class="step-text" data-translate="booking.form.date">Date & Time</span>
                     </div>
-                    <div class="form-group">
-                        <label for="time" data-translate="booking.form.time">Time</label>
-                        <select id="time" required>
-                            <option value="" data-translate="booking.form.selectTime">Select time</option>
-                        </select>
+                    <div class="step" data-step="4">
+                        <span class="step-number">4</span>
+                        <span class="step-text">Details</span>
                     </div>
-                    <div class="form-group">
-                        <label for="name" data-translate="booking.form.name">Name</label>
-                        <input type="text" id="name" required>
+                </div>
+                <form id="appointmentForm" class="booking-form">
+                    <div class="form-step active" data-step="1">
+                        <div class="service-options">
+                            <div class="service-option" data-service="haircut">
+                                <i class="fas fa-cut"></i>
+                                <h3 data-translate="services.haircut.title">Men's Haircut</h3>
+                                <p data-translate="services.haircut.price">€25</p>
+                            </div>
+                            <div class="service-option" data-service="beard">
+                                <i class="fas fa-razor"></i>
+                                <h3 data-translate="services.beard.title">Beard Trimming</h3>
+                                <p data-translate="services.beard.price">€15</p>
+                            </div>
+                            <div class="service-option" data-service="combo">
+                                <i class="fas fa-user-tie"></i>
+                                <h3 data-translate="services.combo.title">Haircut & Beard</h3>
+                                <p data-translate="services.combo.price">€35</p>
+                            </div>
+                            <div class="service-option" data-service="kids">
+                                <i class="fas fa-child"></i>
+                                <h3 data-translate="services.kids.title">Kids</h3>
+                                <p data-translate="services.kids.price">€20</p>
+                            </div>
+                        </div>
+                        <button type="button" class="next-step" data-next="2" disabled>
+                            <span data-translate="booking.form.next">Next</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label for="email" data-translate="booking.form.email">Email</label>
-                        <input type="email" id="email" required>
+                    <div class="form-step" data-step="2">
+                        <div class="barber-options">
+                            <div class="barber-option" data-barber="Adem">
+                                <img src="https://placehold.co/400x500" alt="Adem">
+                                <h3 data-translate="staff.barbers.adem.name">Adem</h3>
+                                <p data-translate="staff.barbers.adem.role">Owner & Master Barber</p>
+                            </div>
+                            <div class="barber-option" data-barber="Hasan">
+                                <img src="https://placehold.co/400x500" alt="Hasan">
+                                <h3 data-translate="staff.barbers.hasan.name">Hasan</h3>
+                                <p data-translate="staff.barbers.hasan.role">Senior Barber</p>
+                            </div>
+                            <div class="barber-option" data-barber="Abdullah">
+                                <img src="https://placehold.co/400x500" alt="Abdullah">
+                                <h3 data-translate="staff.barbers.abdullah.name">Abdullah</h3>
+                                <p data-translate="staff.barbers.abdullah.role">Barber</p>
+                            </div>
+                        </div>
+                        <div class="form-navigation">
+                            <button type="button" class="prev-step" data-prev="1">
+                                <i class="fas fa-arrow-left"></i>
+                                <span data-translate="booking.form.previous">Previous</span>
+                            </button>
+                            <button type="button" class="next-step" data-next="3" disabled>
+                                <span data-translate="booking.form.next">Next</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="phone" data-translate="booking.form.phone">Phone</label>
-                        <input type="tel" id="phone" required>
+                    <div class="form-step" data-step="3">
+                        <div class="datetime-picker">
+                            <div class="date-picker">
+                                <label for="date" data-translate="booking.form.date">Date</label>
+                                <input type="date" id="date" required>
+                            </div>
+                            <div class="time-picker">
+                                <label for="time" data-translate="booking.form.time">Time</label>
+                                <select id="time" required>
+                                    <option value="" data-translate="booking.form.selectTime">Select time</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-navigation">
+                            <button type="button" class="prev-step" data-prev="2">
+                                <i class="fas fa-arrow-left"></i>
+                                <span data-translate="booking.form.previous">Previous</span>
+                            </button>
+                            <button type="button" class="next-step" data-next="4" disabled>
+                                <span data-translate="booking.form.next">Next</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
                     </div>
-                    <button type="submit" class="submit-btn" data-translate="booking.form.submit">Book Appointment</button>
+                    <div class="form-step" data-step="4">
+                        <div class="contact-details">
+                            <div class="form-group">
+                                <label for="name" data-translate="booking.form.name">Name</label>
+                                <input type="text" id="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" data-translate="booking.form.email">Email</label>
+                                <input type="email" id="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone" data-translate="booking.form.phone">Phone</label>
+                                <input type="tel" id="phone" required>
+                            </div>
+                        </div>
+                        <div class="form-navigation">
+                            <button type="button" class="prev-step" data-prev="3">
+                                <i class="fas fa-arrow-left"></i>
+                                <span data-translate="booking.form.previous">Previous</span>
+                            </button>
+                            <button type="submit" class="submit-btn" data-translate="booking.form.submit">
+                                Book Appointment
+                            </button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -161,43 +298,73 @@
 
     <section id="contact" class="contact">
         <div class="container">
-            <h2 data-translate="contact.title">Contact & Location</h2>
-            <div class="contact-info">
-                <div class="info-card">
-                    <i class="fas fa-clock"></i>
-                    <h3 data-translate="contact.hours.title">Opening Hours</h3>
-                    <p data-translate="contact.hours.schedule">Monday - Sunday: 09:00 - 17:30</p>
+            <div class="section-header" data-aos="fade-up">
+                <h2 data-translate="contact.title">Contact & Location</h2>
+                <p data-translate="contact.subtitle">Visit us or make an appointment</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info" data-aos="fade-up" data-aos-delay="100">
+                    <div class="info-card">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h3 data-translate="contact.address">Address</h3>
+                        <p>Nieuwe Binnenweg 223A</p>
+                        <p>3021 GA Rotterdam</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-phone"></i>
+                        <h3 data-translate="contact.phone">Phone</h3>
+                        <p><a href="tel:+31104669007">+31 (0)10 466 9007</a></p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-clock"></i>
+                        <h3 data-translate="contact.hours">Opening Hours</h3>
+                        <p><span data-translate="contact.weekdays">Monday - Friday</span>: 09:00 - 17:30</p>
+                        <p><span data-translate="contact.saturday">Saturday</span>: 09:00 - 17:30</p>
+                        <p><span data-translate="contact.sunday">Sunday</span>: <span data-translate="contact.closed">Closed</span></p>
+                    </div>
                 </div>
-                <div class="info-card">
-                    <i class="fas fa-phone"></i>
-                    <h3 data-translate="contact.contact.title">Contact</h3>
-                    <p>Hasan: <a href="tel:+31687347940">+31 6 8734 7940</a></p>
-                    <p>Adem: <a href="tel:+31684262200">+31 6 8426 2200</a></p>
-                    <p>Abdullah: <a href="tel:+31614627757">+31 6 1462 7757</a></p>
-                </div>
-                <div class="info-card">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <h3 data-translate="contact.address.title">Address</h3>
-                    <p>Dortselaan 44/A-3073-6D</p>
-                    <p>Rotterdam</p>
-                    <a href="https://maps.google.com/?q=Dortselaan+44/A,+3073+GN+Rotterdam" target="_blank" class="directions-link" data-translate="contact.address.getDirections">Get Directions</a>
+                <div class="contact-map" data-aos="fade-up" data-aos-delay="200">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2461.3166090864774!2d4.464555776941698!3d51.91435098115615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c434a5c1d1978f%3A0x3ff905575dc5f80!2sNieuwe%20Binnenweg%20223A%2C%203021%20GA%20Rotterdam!5e0!3m2!1sen!2snl!4v1702935458635!5m2!1sen!2snl"
+                        width="100%"
+                        height="450"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer>
+    <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo">
                     <i class="fas fa-cut"></i>
                     <span>Kapsalon Adem</span>
                 </div>
-                <p>&copy; 2024 Kapsalon Adem. <span data-translate="footer.rights">All rights reserved</span></p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Kapsalon Adem. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            offset: 50,
+            once: true
+        });
+    </script>
     <script src="translations.js"></script>
     <script src="script.js"></script>
 </body>
