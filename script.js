@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded');
+    
     // Initialize the booking system
     initializeBookingSystem();
     
@@ -9,17 +11,24 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeSmoothScroll();
 
     // Initialize language switching
-    initializeLanguageSwitch();
-    
-    // Initialize language selector
     initializeLanguageSelector();
+    
+    // Update content with current language
+    updateContent(currentLanguage);
 });
 
 function initializeBookingSystem() {
+    console.log('Initializing booking system...');
+    
     const timeSelect = document.getElementById('time');
     const dateInput = document.getElementById('date');
     const barberSelect = document.getElementById('barber');
     const form = document.getElementById('appointmentForm');
+
+    if (!timeSelect || !dateInput || !barberSelect || !form) {
+        console.error('Missing required form elements');
+        return;
+    }
 
     // Set minimum date to today
     const today = new Date();
@@ -27,44 +36,57 @@ function initializeBookingSystem() {
     tomorrow.setDate(tomorrow.getDate() + 1);
     dateInput.min = tomorrow.toISOString().split('T')[0];
 
-    // Generate time slots when date changes
+    // Add event listeners
     dateInput.addEventListener('change', function() {
-        generateTimeSlots();
+        console.log('Date changed:', this.value);
+        if (barberSelect.value) {
+            generateTimeSlots();
+        }
     });
 
-    // Generate time slots when barber changes
     barberSelect.addEventListener('change', function() {
+        console.log('Barber changed:', this.value);
         if (dateInput.value) {
             generateTimeSlots();
         }
     });
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        handleBookingSubmission();
-    });
+    form.addEventListener('submit', handleBookingSubmission);
 }
 
 async function generateTimeSlots() {
+    console.log('Generating time slots...');
     const dateInput = document.getElementById('date');
     const timeSelect = document.getElementById('time');
-    const barberSelect = document.getElementById('barber').value;
+    const barberSelect = document.getElementById('barber');
+
+    if (!dateInput || !timeSelect || !barberSelect) {
+        console.error('Missing form elements');
+        return;
+    }
+
     const selectedDate = dateInput.value;
+    const selectedBarber = barberSelect.value;
 
-    timeSelect.innerHTML = `<option value="">${translations[currentLanguage].booking.form.selectTime || 'Select time'}</option>`;
-    
-    if (!selectedDate) return;
+    console.log('Selected date:', selectedDate);
+    console.log('Selected barber:', selectedBarber);
 
-    // Get booked appointments for the selected date
+    // Clear existing options
+    timeSelect.innerHTML = '<option value="" data-translate="booking.form.selectTime">Select time</option>';
+
+    // Generate time slots from 09:00 to 17:30 with 30-minute intervals
+    const startTime = 9 * 60; // 09:00 in minutes
+    const endTime = 17 * 60 + 30; // 17:30 in minutes
+    const interval = 30; // 30 minutes
+
     try {
+        // Get booked appointments
         const response = await fetch(`https://kapsalon-adem.onrender.com/api/appointments/${selectedDate}`);
-        const bookedAppointments = await response.json();
+        const bookedAppointments = response.ok ? await response.json() : [];
+        
+        console.log('Booked appointments:', bookedAppointments);
 
-        // Generate time slots from 09:00 to 17:30 with 30-minute intervals
-        const startTime = 9 * 60; // 09:00 in minutes
-        const endTime = 17 * 60 + 30; // 17:30 in minutes
-        const interval = 30; // 30 minutes
-
+        // Generate all possible time slots
         for (let time = startTime; time <= endTime - interval; time += interval) {
             const hours = Math.floor(time / 60);
             const minutes = time % 60;
@@ -73,7 +95,7 @@ async function generateTimeSlots() {
             // Check if this time slot is available
             const isBooked = bookedAppointments.some(apt => 
                 apt.time === timeString && 
-                apt.barber === barberSelect
+                apt.barber === selectedBarber
             );
 
             if (!isBooked) {
@@ -83,8 +105,22 @@ async function generateTimeSlots() {
                 timeSelect.appendChild(option);
             }
         }
+
+        // If no slots are available, show message
+        if (timeSelect.options.length === 1) {
+            const option = document.createElement('option');
+            option.value = "";
+            option.disabled = true;
+            option.textContent = translations[currentLanguage].booking.form.noTimeSlots || 'No available time slots';
+            timeSelect.appendChild(option);
+        }
     } catch (error) {
         console.error('Error fetching appointments:', error);
+        const option = document.createElement('option');
+        option.value = "";
+        option.disabled = true;
+        option.textContent = translations[currentLanguage].booking.form.errorTimeSlots || 'Error loading time slots';
+        timeSelect.appendChild(option);
     }
 }
 
@@ -154,10 +190,37 @@ async function handleBookingSubmission() {
 function initializeMobileMenu() {
     const hamburger = document.querySelector('.hamburger');
     const navLinks = document.querySelector('.nav-links');
-    
-    hamburger.addEventListener('click', function() {
-        navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-        this.classList.toggle('active');
+    const navLinksItems = document.querySelectorAll('.nav-links a');
+
+    if (!hamburger || !navLinks) {
+        console.error('Mobile menu elements not found');
+        return;
+    }
+
+    // Toggle menu on hamburger click
+    hamburger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        hamburger.classList.toggle('active');
+        navLinks.classList.toggle('active');
+        document.body.classList.toggle('menu-open');
+    });
+
+    // Close menu when clicking on a link
+    navLinksItems.forEach(item => {
+        item.addEventListener('click', function() {
+            hamburger.classList.remove('active');
+            navLinks.classList.remove('active');
+            document.body.classList.remove('menu-open');
+        });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+            hamburger.classList.remove('active');
+            navLinks.classList.remove('active');
+            document.body.classList.remove('menu-open');
+        }
     });
 }
 
@@ -179,41 +242,6 @@ function initializeSmoothScroll() {
 // Language switching functionality
 let currentLanguage = localStorage.getItem('language') || 'nl';
 
-function initializeLanguageSwitch() {
-    const languageSwitch = document.querySelector('.language-switch');
-    if (languageSwitch) {
-        languageSwitch.addEventListener('click', toggleLanguage);
-        updateContent(currentLanguage);
-    }
-}
-
-function toggleLanguage() {
-    currentLanguage = currentLanguage === 'nl' ? 'en' : 'nl';
-    localStorage.setItem('language', currentLanguage);
-    updateContent(currentLanguage);
-}
-
-function updateContent(lang) {
-    // Handle both data-translate and data-i18n attributes during transition
-    const elements = document.querySelectorAll('[data-translate], [data-i18n]');
-    elements.forEach(element => {
-        const key = element.dataset.translate || element.dataset.i18n;
-        const keys = key.split('.');
-        let translation = translations[lang];
-        keys.forEach(k => {
-            translation = translation[k];
-        });
-        if (translation) {
-            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                element.placeholder = translation;
-            } else {
-                element.textContent = translation;
-            }
-        }
-    });
-}
-
-// Language selector functionality
 function initializeLanguageSelector() {
     const languageSelector = document.querySelector('.language-selector');
     const currentLang = languageSelector.querySelector('.current-lang');
@@ -253,6 +281,32 @@ function initializeLanguageSelector() {
     // Close dropdown when clicking outside
     document.addEventListener('click', () => {
         dropdown.classList.remove('show');
+    });
+}
+
+function toggleLanguage() {
+    currentLanguage = currentLanguage === 'nl' ? 'en' : 'nl';
+    localStorage.setItem('language', currentLanguage);
+    updateContent(currentLanguage);
+}
+
+function updateContent(lang) {
+    // Handle both data-translate and data-i18n attributes during transition
+    const elements = document.querySelectorAll('[data-translate], [data-i18n]');
+    elements.forEach(element => {
+        const key = element.dataset.translate || element.dataset.i18n;
+        const keys = key.split('.');
+        let translation = translations[lang];
+        keys.forEach(k => {
+            translation = translation[k];
+        });
+        if (translation) {
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.placeholder = translation;
+            } else {
+                element.textContent = translation;
+            }
+        }
     });
 }
 
