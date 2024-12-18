@@ -65,22 +65,79 @@ app.post('/api/appointments', async (req, res) => {
         const appointment = new Appointment(req.body);
         await appointment.save();
 
+        // Email templates based on language
+        const emailTemplates = {
+            nl: {
+                customer: {
+                    subject: 'Afspraakbevestiging - Kapsalon Adem',
+                    title: 'Bedankt voor uw afspraak bij Kapsalon Adem',
+                    details: 'Afspraakdetails:',
+                    date: 'Datum',
+                    time: 'Tijd',
+                    service: 'Service',
+                    barber: 'Kapper',
+                    address: 'Adres',
+                    changeText: 'Als u uw afspraak wilt wijzigen of annuleren, bel ons dan op een van de volgende nummers:'
+                },
+                salon: {
+                    subject: 'Nieuwe Afspraak - Kapsalon Adem',
+                    title: 'Nieuwe afspraak gemaakt',
+                    details: 'Afspraakdetails:',
+                    name: 'Naam',
+                    email: 'Email',
+                    phone: 'Telefoon',
+                    date: 'Datum',
+                    time: 'Tijd',
+                    service: 'Service',
+                    barber: 'Kapper'
+                }
+            },
+            en: {
+                customer: {
+                    subject: 'Appointment Confirmation - Kapsalon Adem',
+                    title: 'Thank you for your appointment at Kapsalon Adem',
+                    details: 'Appointment details:',
+                    date: 'Date',
+                    time: 'Time',
+                    service: 'Service',
+                    barber: 'Barber',
+                    address: 'Address',
+                    changeText: 'If you need to change or cancel your appointment, please call us at one of the following numbers:'
+                },
+                salon: {
+                    subject: 'New Appointment - Kapsalon Adem',
+                    title: 'New appointment made',
+                    details: 'Appointment details:',
+                    name: 'Name',
+                    email: 'Email',
+                    phone: 'Phone',
+                    date: 'Date',
+                    time: 'Time',
+                    service: 'Service',
+                    barber: 'Barber'
+                }
+            }
+        };
+
+        const lang = req.body.language || 'nl';
+        const template = emailTemplates[lang];
+
         // Send confirmation email to customer
         const customerMsg = {
             to: appointment.email,
             from: process.env.FROM_EMAIL,
-            subject: 'Afspraakbevestiging - Kapsalon Adem',
+            subject: template.customer.subject,
             html: `
-                <h2>Bedankt voor uw afspraak bij Kapsalon Adem</h2>
-                <p>Afspraakdetails:</p>
+                <h2>${template.customer.title}</h2>
+                <p>${template.customer.details}</p>
                 <ul>
-                    <li>Datum: ${moment(appointment.date).format('DD-MM-YYYY')}</li>
-                    <li>Tijd: ${appointment.time}</li>
-                    <li>Service: ${appointment.service}</li>
-                    <li>Kapper: ${appointment.barber}</li>
+                    <li>${template.customer.date}: ${moment(appointment.date).format('DD-MM-YYYY')}</li>
+                    <li>${template.customer.time}: ${appointment.time}</li>
+                    <li>${template.customer.service}: ${appointment.service}</li>
+                    <li>${template.customer.barber}: ${appointment.barber}</li>
                 </ul>
-                <p>Adres: Dortselaan 44/A-3073-6D, Rotterdam</p>
-                <p>Als u uw afspraak wilt wijzigen of annuleren, bel ons dan op een van de volgende nummers:</p>
+                <p>${template.customer.address}: Dortselaan 44/A-3073-6D, Rotterdam</p>
+                <p>${template.customer.changeText}</p>
                 <ul>
                     <li>Hasan: +31687347940</li>
                     <li>Adem: +31684262200</li>
@@ -93,18 +150,18 @@ app.post('/api/appointments', async (req, res) => {
         const salonMsg = {
             to: process.env.SALON_EMAIL,
             from: process.env.FROM_EMAIL,
-            subject: 'Nieuwe Afspraak - Kapsalon Adem',
+            subject: template.salon.subject,
             html: `
-                <h2>Nieuwe afspraak gemaakt</h2>
-                <p>Afspraakdetails:</p>
+                <h2>${template.salon.title}</h2>
+                <p>${template.salon.details}</p>
                 <ul>
-                    <li>Naam: ${appointment.name}</li>
-                    <li>Email: ${appointment.email}</li>
-                    <li>Telefoon: ${appointment.phone}</li>
-                    <li>Datum: ${moment(appointment.date).format('DD-MM-YYYY')}</li>
-                    <li>Tijd: ${appointment.time}</li>
-                    <li>Service: ${appointment.service}</li>
-                    <li>Kapper: ${appointment.barber}</li>
+                    <li>${template.salon.name}: ${appointment.name}</li>
+                    <li>${template.salon.email}: ${appointment.email}</li>
+                    <li>${template.salon.phone}: ${appointment.phone}</li>
+                    <li>${template.salon.date}: ${moment(appointment.date).format('DD-MM-YYYY')}</li>
+                    <li>${template.salon.time}: ${appointment.time}</li>
+                    <li>${template.salon.service}: ${appointment.service}</li>
+                    <li>${template.salon.barber}: ${appointment.barber}</li>
                 </ul>
             `
         };

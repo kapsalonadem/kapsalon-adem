@@ -1,6 +1,7 @@
 const translations = {
     en: {
         nav: {
+            logo: "Kapsalon Adem",
             home: "Home",
             services: "Services",
             staff: "Our Team",
@@ -33,6 +34,8 @@ const translations = {
         },
         booking: {
             title: "Online Booking",
+            success: "Appointment confirmed! Check your email for details.",
+            error: "Error creating appointment. Please try again.",
             form: {
                 service: "Choose Service",
                 selectService: "Select a service",
@@ -52,7 +55,7 @@ const translations = {
                 schedule: "Monday - Sunday: 09:00 - 17:30"
             },
             contact: {
-                title: "Contact",
+                title: "Contact"
             },
             address: {
                 title: "Address",
@@ -65,6 +68,7 @@ const translations = {
     },
     nl: {
         nav: {
+            logo: "Kapsalon Adem",
             home: "Home",
             services: "Diensten",
             staff: "Ons Team",
@@ -79,8 +83,8 @@ const translations = {
         services: {
             title: "Onze Diensten",
             haircut: {
-                title: "Heren Knipbeurt",
-                description: "Complete knipbeurt met advies"
+                title: "Heren Kapsel",
+                description: "Complete knipbeurt met consult"
             },
             beard: {
                 title: "Baard Trimmen",
@@ -93,16 +97,18 @@ const translations = {
         },
         staff: {
             title: "Ons Team",
-            position: "Master Barber"
+            position: "Meester Kapper"
         },
         booking: {
             title: "Online Reserveren",
+            success: "Afspraak bevestigd! Controleer uw e-mail voor details.",
+            error: "Fout bij het maken van de afspraak. Probeer het opnieuw.",
             form: {
-                service: "Kies Behandeling",
-                selectService: "Selecteer een behandeling",
+                service: "Kies Dienst",
+                selectService: "Selecteer een dienst",
                 date: "Datum",
                 time: "Tijd",
-                selectTime: "Selecteer een tijd",
+                selectTime: "Selecteer tijd",
                 name: "Naam",
                 email: "Email",
                 phone: "Telefoon",
@@ -116,11 +122,11 @@ const translations = {
                 schedule: "Maandag - Zondag: 09:00 - 17:30"
             },
             contact: {
-                title: "Contact",
+                title: "Contact"
             },
             address: {
                 title: "Adres",
-                getDirections: "Route plannen"
+                getDirections: "Route"
             }
         },
         footer: {

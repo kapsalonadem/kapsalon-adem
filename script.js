@@ -59,55 +59,45 @@ function generateTimeSlots() {
 }
 
 async function handleBookingSubmission() {
-    const formData = {
-        service: document.getElementById('service').value,
-        date: document.getElementById('date').value,
-        time: document.getElementById('time').value,
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        barber: document.getElementById('barber').value
+    const service = document.getElementById('service').value;
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const barber = document.getElementById('barber').value;
+
+    const appointmentData = {
+        service,
+        date,
+        time,
+        name,
+        email,
+        phone,
+        barber,
+        language: currentLanguage // Add the current language
     };
 
     try {
-        // First check availability
-        const availabilityResponse = await fetch('/api/check-availability', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                date: formData.date,
-                time: formData.time,
-                barber: formData.barber
-            }),
-        });
-
-        const availabilityData = await availabilityResponse.json();
-
-        if (!availabilityData.available) {
-            alert('Deze tijd is helaas niet meer beschikbaar. Kies alstublieft een andere tijd.');
-            return;
-        }
-
-        // If available, create the appointment
         const response = await fetch('/api/appointments', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify(formData),
+            body: JSON.stringify(appointmentData)
         });
 
         if (response.ok) {
-            alert('Bedankt voor uw reservering! U ontvangt binnen enkele minuten een bevestigingsmail.');
+            const result = await response.json();
+            alert(translations[currentLanguage].booking.success || 'Appointment confirmed! Check your email for details.');
             document.getElementById('appointmentForm').reset();
         } else {
-            alert('Er is een fout opgetreden bij het maken van de afspraak. Probeer het later opnieuw.');
+            const error = await response.json();
+            alert(translations[currentLanguage].booking.error || 'Error creating appointment. Please try again.');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Er is een fout opgetreden bij het maken van de afspraak. Probeer het later opnieuw.');
+        alert(translations[currentLanguage].booking.error || 'Error creating appointment. Please try again.');
     }
 }
 
