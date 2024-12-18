@@ -113,15 +113,23 @@ async function generateTimeSlots() {
     try {
         // Get booked appointments
         const response = await fetch(`https://kapsalon-adem.onrender.com/api/appointments/${selectedDate}`);
-        const bookedAppointments = response.ok ? await response.json() : [];
+        let bookedAppointments = [];
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (Array.isArray(data)) {
+                bookedAppointments = data;
+            }
+        }
         
         console.log('Booked appointments:', bookedAppointments);
 
         // Clear and re-enable select
         timeSelect.disabled = false;
-        timeSelect.innerHTML = '<option value="" data-translate="booking.form.selectTime">Select time</option>';
+        timeSelect.innerHTML = `<option value="">${translations[currentLanguage].booking.form.selectTime || 'Select time'}</option>`;
 
         // Generate all possible time slots
+        let availableSlots = 0;
         for (let time = startTime; time <= endTime - interval; time += interval) {
             const hours = Math.floor(time / 60);
             const minutes = time % 60;
@@ -138,11 +146,12 @@ async function generateTimeSlots() {
                 option.value = timeString;
                 option.textContent = timeString;
                 timeSelect.appendChild(option);
+                availableSlots++;
             }
         }
 
         // If no slots are available, show message
-        if (timeSelect.options.length === 1) {
+        if (availableSlots === 0) {
             const option = document.createElement('option');
             option.value = "";
             option.disabled = true;
@@ -150,13 +159,24 @@ async function generateTimeSlots() {
             timeSelect.appendChild(option);
         }
 
-        // Update translations
-        updateContent(currentLanguage);
     } catch (error) {
         console.error('Error fetching appointments:', error);
+        
+        // In case of error, show all time slots
         timeSelect.disabled = false;
-        timeSelect.innerHTML = '<option value="" data-translate="booking.form.errorLoading">Error loading time slots</option>';
-        updateContent(currentLanguage);
+        timeSelect.innerHTML = `<option value="">${translations[currentLanguage].booking.form.selectTime || 'Select time'}</option>`;
+        
+        // Generate all time slots without checking availability
+        for (let time = startTime; time <= endTime - interval; time += interval) {
+            const hours = Math.floor(time / 60);
+            const minutes = time % 60;
+            const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            
+            const option = document.createElement('option');
+            option.value = timeString;
+            option.textContent = timeString;
+            timeSelect.appendChild(option);
+        }
     }
 }
 
