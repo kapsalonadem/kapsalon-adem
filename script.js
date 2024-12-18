@@ -37,24 +37,46 @@ function initializeBookingSystem() {
     });
 }
 
-function generateTimeSlots() {
+async function generateTimeSlots() {
+    const dateInput = document.getElementById('date');
     const timeSelect = document.getElementById('time');
-    timeSelect.innerHTML = '<option value="">Selecteer een tijd</option>';
-    
-    // Generate time slots from 09:00 to 17:30 with 30-minute intervals
-    const startTime = 9 * 60; // 09:00 in minutes
-    const endTime = 17 * 60 + 30; // 17:30 in minutes
-    const interval = 30; // 30 minutes
+    const barberSelect = document.getElementById('barber').value;
+    const selectedDate = dateInput.value;
 
-    for (let time = startTime; time <= endTime - interval; time += interval) {
-        const hours = Math.floor(time / 60);
-        const minutes = time % 60;
-        const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-        
-        const option = document.createElement('option');
-        option.value = timeString;
-        option.textContent = timeString;
-        timeSelect.appendChild(option);
+    timeSelect.innerHTML = `<option value="">${translations[currentLanguage].booking.form.selectTime || 'Select time'}</option>`;
+    
+    if (!selectedDate) return;
+
+    // Get booked appointments for the selected date
+    try {
+        const response = await fetch(`https://kapsalon-adem.onrender.com/api/appointments/${selectedDate}`);
+        const bookedAppointments = await response.json();
+
+        // Generate time slots from 09:00 to 17:30 with 30-minute intervals
+        const startTime = 9 * 60; // 09:00 in minutes
+        const endTime = 17 * 60 + 30; // 17:30 in minutes
+        const interval = 30; // 30 minutes
+
+        for (let time = startTime; time <= endTime - interval; time += interval) {
+            const hours = Math.floor(time / 60);
+            const minutes = time % 60;
+            const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            
+            // Check if this time slot is available
+            const isBooked = bookedAppointments.some(apt => 
+                apt.time === timeString && 
+                apt.barber === barberSelect
+            );
+
+            if (!isBooked) {
+                const option = document.createElement('option');
+                option.value = timeString;
+                option.textContent = timeString;
+                timeSelect.appendChild(option);
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching appointments:', error);
     }
 }
 
@@ -75,11 +97,31 @@ async function handleBookingSubmission() {
         email,
         phone,
         barber,
-        language: currentLanguage // Add the current language
+        language: currentLanguage
     };
 
     try {
-        const response = await fetch('/api/appointments', {
+        // First check availability
+        const availabilityResponse = await fetch('https://kapsalon-adem.onrender.com/api/check-availability', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                date: appointmentData.date,
+                time: appointmentData.time,
+                barber: appointmentData.barber
+            }),
+        });
+
+        const availabilityData = await availabilityResponse.json();
+
+        if (!availabilityData.available) {
+            alert(translations[currentLanguage].booking.timeNotAvailable || 'This time slot is not available. Please choose another time.');
+            return;
+        }
+
+        const response = await fetch('https://kapsalon-adem.onrender.com/api/appointments', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
