@@ -2,15 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kapsalon Adem - Professional Barbershop Rotterdam</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <script>
+        console.log('Page starting to load');
+        
+        // Basic error handling
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            console.error('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError object: ' + JSON.stringify(error));
+            return false;
+        };
+    </script>
+    <script src="translations.js"></script>
+    <script src="script.js"></script>
 </head>
 <body>
     <div class="language-selector">
-        <button class="language-switch current-lang">
+        <button class="language-switch">
             <img src="https://flagcdn.com/w40/nl.png" alt="Nederlands" class="lang-flag">
             <span>NL</span>
         </button>
@@ -195,8 +206,5 @@
             </div>
         </div>
     </footer>
-
-    <script src="translations.js"></script>
-    <script src="script.js"></script>
 </body>
 </html>
