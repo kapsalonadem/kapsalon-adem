@@ -11,25 +11,11 @@ const PORT = process.env.PORT || 3000;
 
 // Security middleware
 app.use(helmet());
-app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? ['https://ademkapsalon.netlify.app']
-        : ['http://localhost:3000', 'http://localhost:5000']
-}));
+app.use(cors()); // Allow all origins for now
 
 // Standard middleware
 app.use(express.json());
 app.use(express.static('public'));
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ 
-        error: process.env.NODE_ENV === 'production' 
-            ? 'Internal Server Error' 
-            : err.message 
-    });
-});
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -236,4 +222,14 @@ app.get('/api/appointments/:date', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});
+
+// Error handling middleware (must be after all routes)
+app.use((err, req, res, next) => {
+    console.error('Error:', err);
+    res.status(500).json({ 
+        error: process.env.NODE_ENV === 'production' 
+            ? 'Internal Server Error' 
+            : err.message 
+    });
 });
