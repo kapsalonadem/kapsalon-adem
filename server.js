@@ -4,17 +4,53 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const sgMail = require('@sendgrid/mail');
 const moment = require('moment');
+const helmet = require('helmet');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
+// Security middleware
+app.use(helmet());
+app.use(cors({
+    origin: process.env.NODE_ENV === 'production' 
+        ? ['https://ademkapsalon.netlify.app']
+        : ['http://localhost:3000', 'http://localhost:5000']
+}));
+
+// Standard middleware
 app.use(express.json());
 app.use(express.static('public'));
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/kapsalon-adem');
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ 
+        error: process.env.NODE_ENV === 'production' 
+            ? 'Internal Server Error' 
+            : err.message 
+    });
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'OK' });
+});
+
+// MongoDB connection with retry logic
+const connectDB = async () => {
+    try {
+        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/kapsalon-adem', {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        });
+        console.log('MongoDB connected successfully');
+    } catch (err) {
+        console.error('MongoDB connection error:', err);
+        setTimeout(connectDB, 5000); // Retry after 5 seconds
+    }
+};
+
+connectDB();
 
 // Initialize SendGrid
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -196,6 +232,8 @@ app.get('/api/appointments/:date', async (req, res) => {
     }
 });
 
+// Start server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
