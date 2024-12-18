@@ -154,9 +154,10 @@ function toggleLanguage() {
 }
 
 function updateContent(lang) {
-    const elements = document.querySelectorAll('[data-translate]');
+    // Handle both data-translate and data-i18n attributes during transition
+    const elements = document.querySelectorAll('[data-translate], [data-i18n]');
     elements.forEach(element => {
-        const key = element.dataset.translate;
+        const key = element.dataset.translate || element.dataset.i18n;
         const keys = key.split('.');
         let translation = translations[lang];
         keys.forEach(k => {
