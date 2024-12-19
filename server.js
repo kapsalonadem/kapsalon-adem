@@ -10,6 +10,7 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs').promises;
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +18,7 @@ const PORT = process.env.PORT || 3000;
 // Security middleware
 app.use(helmet());
 app.use(cors()); // Allow all origins for now
+app.use(cookieParser());
 
 // Standard middleware
 app.use(express.json());
