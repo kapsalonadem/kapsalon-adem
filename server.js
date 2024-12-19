@@ -34,26 +34,41 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/api/health', (req, res) => {
     const dbStatus = mongoose.connection.readyState === 1;
     res.json({
         status: 'ok',
         database: dbStatus ? 'connected' : 'disconnected',
+        environment: process.env.NODE_ENV,
         timestamp: new Date()
     });
 });
 
 // MongoDB connection with retry logic
 const connectDB = async () => {
-    try {
-        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/kapsalon-adem', {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
-        console.log('MongoDB connected successfully');
-    } catch (err) {
-        console.error('MongoDB connection error:', err);
-        setTimeout(connectDB, 5000); // Retry after 5 seconds
+    const maxRetries = 5;
+    let retries = 0;
+    
+    while (retries < maxRetries) {
+        try {
+            console.log('Attempting to connect to MongoDB...');
+            await mongoose.connect(process.env.MONGODB_URI, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+                serverSelectionTimeoutMS: 5000
+            });
+            console.log('MongoDB connected successfully');
+            return;
+        } catch (error) {
+            retries++;
+            console.error(`MongoDB connection attempt ${retries} failed:`, error.message);
+            if (retries === maxRetries) {
+                console.error('Max retries reached. Could not connect to MongoDB');
+                process.exit(1);
+            }
+            // Wait before retrying (exponential backoff)
+            await new Promise(resolve => setTimeout(resolve, Math.min(1000 * Math.pow(2, retries), 10000)));
+        }
     }
 };
 
