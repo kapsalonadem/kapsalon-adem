@@ -339,6 +339,71 @@ setInterval(() => {
     }
 }, 15 * 60 * 1000); // Run every 15 minutes
 
+// Email configuration
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
+// Email template function
+function generateBookingEmail(booking) {
+    return {
+        subject: 'Booking Confirmation - Kapsalon Adem',
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #333;">Thank you for your booking!</h2>
+                <p>Dear ${booking.name},</p>
+                <p>Your appointment has been confirmed:</p>
+                <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                    <p><strong>Service:</strong> ${booking.service}</p>
+                    <p><strong>Date:</strong> ${new Date(booking.date).toLocaleDateString()}</p>
+                    <p><strong>Time:</strong> ${booking.time}</p>
+                    <p><strong>Barber:</strong> ${booking.barber}</p>
+                </div>
+                <p><strong>Location:</strong> [Barbershop Address]</p>
+                <p>If you need to cancel or reschedule, please contact us at least 24 hours in advance.</p>
+                <p>Phone: [Phone Number]</p>
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+                    <p style="color: #666; font-size: 12px;">
+                        This is an automated message, please do not reply to this email.
+                    </p>
+                </div>
+            </div>
+        `
+    };
+}
+
+// Update the booking route to include email confirmation
+app.post('/api/bookings', async (req, res) => {
+    try {
+        const booking = new Appointment(req.body);
+        await booking.save();
+
+        // Send confirmation email
+        const emailContent = generateBookingEmail(booking);
+        await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: booking.email,
+            subject: emailContent.subject,
+            html: emailContent.html
+        });
+
+        res.status(201).json({ 
+            message: 'Booking confirmed! Check your email for details.',
+            booking 
+        });
+    } catch (error) {
+        console.error('Booking error:', error);
+        res.status(500).json({ 
+            message: 'Error creating booking',
+            error: error.message 
+        });
+    }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);

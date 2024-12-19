@@ -393,3 +393,82 @@ window.addEventListener('scroll', function() {
         }
     });
 });
+
+// Language translations
+const translations = {
+    en: {
+        'hero.title': 'Welcome to Kapsalon Adem',
+        'hero.subtitle': 'Premium Barbershop Experience in Rotterdam',
+        'booking.title': 'Book an Appointment',
+        'booking.subtitle': 'Choose your preferred time and service',
+        // Add more translations
+    },
+    nl: {
+        'hero.title': 'Welkom bij Kapsalon Adem',
+        'hero.subtitle': 'Premium Kapperservaring in Rotterdam',
+        'booking.title': 'Maak een Afspraak',
+        'booking.subtitle': 'Kies je gewenste tijd en service',
+        // Add more translations
+    },
+    tr: {
+        'hero.title': 'Kapsalon Adem\'e Hoşgeldiniz',
+        'hero.subtitle': 'Rotterdam\'da Premium Berber Deneyimi',
+        'booking.title': 'Randevu Al',
+        'booking.subtitle': 'Tercih ettiğiniz zaman ve hizmeti seçin',
+        // Add more translations
+    }
+};
+
+// Language switcher functionality
+function initializeLanguage() {
+    const currentLang = localStorage.getItem('language') || 'en';
+    document.documentElement.lang = currentLang;
+    updateLanguage(currentLang);
+
+    // Add click handlers to language buttons
+    document.querySelectorAll('.language-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.dataset.lang;
+            localStorage.setItem('language', lang);
+            updateLanguage(lang);
+        });
+    });
+}
+
+function updateLanguage(lang) {
+    document.querySelectorAll('[data-translate]').forEach(element => {
+        const key = element.dataset.translate;
+        if (translations[lang] && translations[lang][key]) {
+            element.textContent = translations[lang][key];
+        }
+    });
+
+    // Update active state of language buttons
+    document.querySelectorAll('.language-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+}
+
+// Service booking link functionality
+function initializeServiceBooking() {
+    document.querySelectorAll('.service-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const service = card.dataset.service;
+            const serviceSection = document.getElementById('booking');
+            serviceSection.scrollIntoView({ behavior: 'smooth' });
+            
+            // Pre-select the service in the booking form
+            const serviceInput = document.querySelector(`input[name="service"][value="${service}"]`);
+            if (serviceInput) {
+                serviceInput.checked = true;
+                updateBookingStep(1); // Move to next step
+            }
+        });
+    });
+}
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initializeLanguage();
+    initializeServiceBooking();
+});

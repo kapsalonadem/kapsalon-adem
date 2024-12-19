@@ -1,215 +1,232 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kapsalon Adem - Admin Dashboard</title>
-    <link rel="stylesheet" href="../styles.css">
-    <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/admin/styles.css">
 </head>
-<body class="admin-body">
-    <nav class="admin-nav">
-        <div class="admin-logo">
-            <img src="../assets/images/logo.png" alt="Kapsalon Adem Logo">
-            <span>Admin Panel</span>
-        </div>
-        <div class="admin-nav-links">
-            <a href="#" class="active" data-tab="dashboard"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="#" data-tab="services"><i class="fas fa-cut"></i> Services</a>
-            <a href="#" data-tab="schedule"><i class="fas fa-calendar"></i> Schedule</a>
-            <a href="#" data-tab="bookings"><i class="fas fa-book"></i> Bookings</a>
-            <a href="#" data-tab="settings"><i class="fas fa-cog"></i> Settings</a>
-            <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        </div>
-    </nav>
-
-    <main class="admin-main">
-        <!-- Dashboard Overview -->
-        <section id="dashboard" class="admin-section active">
-            <h2>Dashboard Overview</h2>
-            <div class="dashboard-cards">
-                <div class="dashboard-card">
-                    <h3>Today's Bookings</h3>
-                    <p class="count" id="todayBookings">0</p>
-                </div>
-                <div class="dashboard-card">
-                    <h3>Pending Approvals</h3>
-                    <p class="count" id="pendingApprovals">0</p>
-                </div>
-                <div class="dashboard-card">
-                    <h3>This Week's Revenue</h3>
-                    <p class="count" id="weeklyRevenue">€0</p>
-                </div>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/assets/images/logo.png" alt="Kapsalon Adem Logo" class="logo">
+                <h2>Admin Panel</h2>
             </div>
-            <div id="todaysSchedule" class="schedule-widget">
-                <h3>Today's Schedule</h3>
-                <div class="schedule-list"></div>
-            </div>
-        </section>
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-tab="dashboard">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="#services" class="nav-item" data-tab="services">
+                    <i class="fas fa-cut"></i> Services
+                </a>
+                <a href="#bookings" class="nav-item" data-tab="bookings">
+                    <i class="fas fa-calendar"></i> Bookings
+                </a>
+                <a href="#schedule" class="nav-item" data-tab="schedule">
+                    <i class="fas fa-clock"></i> Work Hours
+                </a>
+                <a href="#holidays" class="nav-item" data-tab="holidays">
+                    <i class="fas fa-umbrella-beach"></i> Holidays
+                </a>
+                <a href="#translations" class="nav-item" data-tab="translations">
+                    <i class="fas fa-language"></i> Translations
+                </a>
+                <a href="#settings" class="nav-item" data-tab="settings">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </nav>
+        </aside>
 
-        <!-- Services Management -->
-        <section id="services" class="admin-section">
-            <h2>Services Management</h2>
-            <button class="add-btn" id="addServiceBtn"><i class="fas fa-plus"></i> Add New Service</button>
-            
-            <div class="services-list">
-                <!-- Services will be loaded here -->
-            </div>
-
-            <!-- Add/Edit Service Modal -->
-            <div id="serviceModal" class="modal">
-                <div class="modal-content">
-                    <h3>Service Details</h3>
-                    <form id="serviceForm">
-                        <div class="form-group">
-                            <label for="serviceName">Service Name</label>
-                            <input type="text" id="serviceName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="servicePrice">Price (€)</label>
-                            <input type="number" id="servicePrice" min="0" step="0.50" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="serviceDuration">Duration (minutes)</label>
-                            <input type="number" id="serviceDuration" min="5" step="5" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="serviceDescription">Description</label>
-                            <textarea id="serviceDescription"></textarea>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="save-btn">Save</button>
-                            <button type="button" class="cancel-btn">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </section>
-
-        <!-- Schedule Management -->
-        <section id="schedule" class="admin-section">
-            <h2>Schedule Management</h2>
-            
-            <div class="schedule-settings">
-                <div class="working-hours">
-                    <h3>Working Hours</h3>
-                    <form id="workingHoursForm">
-                        <div class="days-grid">
-                            <!-- Monday -->
-                            <div class="day-settings">
-                                <label>
-                                    <input type="checkbox" name="monday" checked>
-                                    Monday
-                                </label>
-                                <div class="time-inputs">
-                                    <input type="time" name="monday-start" value="09:00">
-                                    <span>to</span>
-                                    <input type="time" name="monday-end" value="17:30">
-                                </div>
-                                <div class="break-inputs">
-                                    <label>Break:</label>
-                                    <input type="time" name="monday-break-start" value="12:30">
-                                    <span>to</span>
-                                    <input type="time" name="monday-break-end" value="13:30">
-                                </div>
-                            </div>
-                            <!-- Repeat for other days -->
-                        </div>
-                        <button type="submit" class="save-btn">Save Working Hours</button>
-                    </form>
-                </div>
-
-                <div class="special-dates">
-                    <h3>Special Dates & Holidays</h3>
-                    <div class="date-picker">
-                        <input type="date" id="specialDate">
-                        <input type="text" id="specialDateDescription" placeholder="Description (e.g., Holiday)">
-                        <button id="addSpecialDate" class="add-btn">Add Date</button>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="tab-content active">
+                <h1>Dashboard Overview</h1>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <h3>Today's Bookings</h3>
+                        <p class="stat-number" id="todayBookings">0</p>
                     </div>
-                    <div class="special-dates-list">
-                        <!-- Special dates will be listed here -->
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <h3>Total Customers</h3>
+                        <p class="stat-number" id="totalCustomers">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-euro-sign"></i>
+                        <h3>Today's Revenue</h3>
+                        <p class="stat-number" id="todayRevenue">€0</p>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Bookings Management -->
-        <section id="bookings" class="admin-section">
-            <h2>Bookings Management</h2>
-            
-            <div class="bookings-filter">
-                <select id="bookingStatus">
-                    <option value="all">All Bookings</option>
-                    <option value="pending">Pending</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                </select>
-                <input type="date" id="bookingDate">
-                <button class="filter-btn">Filter</button>
-            </div>
-
-            <div class="bookings-list">
-                <!-- Bookings will be loaded here -->
-            </div>
-        </section>
-
-        <!-- Settings -->
-        <section id="settings" class="admin-section">
-            <h2>Settings</h2>
-            
-            <div class="settings-container">
-                <div class="setting-group">
-                    <h3>Notification Settings</h3>
-                    <form id="notificationSettings">
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" name="emailNotifications" checked>
-                                Email notifications for new bookings
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" name="reminderNotifications" checked>
-                                Send reminder emails to customers
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <label for="reminderTime">Send reminder</label>
-                            <select id="reminderTime">
-                                <option value="24">24 hours before</option>
-                                <option value="12">12 hours before</option>
-                                <option value="2">2 hours before</option>
-                            </select>
-                        </div>
-                    </form>
+                <div class="recent-bookings">
+                    <h2>Recent Bookings</h2>
+                    <div class="table-responsive">
+                        <table id="recentBookingsTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Customer</th>
+                                    <th>Service</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
+            </section>
 
-                <div class="setting-group">
-                    <h3>Account Settings</h3>
-                    <form id="accountSettings">
-                        <div class="form-group">
-                            <label for="adminEmail">Email</label>
-                            <input type="email" id="adminEmail" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="currentPassword">Current Password</label>
-                            <input type="password" id="currentPassword">
-                        </div>
-                        <div class="form-group">
-                            <label for="newPassword">New Password</label>
-                            <input type="password" id="newPassword">
-                        </div>
-                        <button type="submit" class="save-btn">Save Changes</button>
-                    </form>
+            <!-- Services Tab -->
+            <section id="services" class="tab-content">
+                <h1>Manage Services</h1>
+                <button class="btn-primary" id="addServiceBtn">
+                    <i class="fas fa-plus"></i> Add New Service
+                </button>
+                <div class="services-grid" id="servicesGrid"></div>
+            </section>
+
+            <!-- Bookings Tab -->
+            <section id="bookings" class="tab-content">
+                <h1>Manage Bookings</h1>
+                <div class="booking-filters">
+                    <input type="date" id="bookingDate" class="filter-input">
+                    <select id="bookingStatus" class="filter-input">
+                        <option value="all">All Status</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="pending">Pending</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    <button class="btn-primary" id="filterBookings">Apply Filters</button>
                 </div>
-            </div>
-        </section>
-    </main>
+                <div class="table-responsive">
+                    <table id="bookingsTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Customer</th>
+                                <th>Service</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-    <script src="admin.js"></script>
+            <!-- Work Hours Tab -->
+            <section id="schedule" class="tab-content">
+                <h1>Work Hours</h1>
+                <div class="schedule-grid">
+                    <div class="day-schedule" data-day="monday">
+                        <h3>Monday</h3>
+                        <div class="time-inputs">
+                            <input type="time" class="start-time">
+                            <span>to</span>
+                            <input type="time" class="end-time">
+                        </div>
+                        <div class="break-time">
+                            <h4>Break Time</h4>
+                            <input type="time" class="break-start">
+                            <span>to</span>
+                            <input type="time" class="break-end">
+                        </div>
+                    </div>
+                    <!-- Repeat for other days -->
+                </div>
+                <button class="btn-primary" id="saveSchedule">Save Schedule</button>
+            </section>
+
+            <!-- Holidays Tab -->
+            <section id="holidays" class="tab-content">
+                <h1>Holiday Management</h1>
+                <div class="holiday-form">
+                    <input type="date" id="holidayDate" class="filter-input">
+                    <input type="text" id="holidayReason" placeholder="Holiday Reason" class="filter-input">
+                    <button class="btn-primary" id="addHoliday">Add Holiday</button>
+                </div>
+                <div class="holidays-list" id="holidaysList"></div>
+            </section>
+
+            <!-- Translations Tab -->
+            <section id="translations" class="tab-content">
+                <h1>Manage Translations</h1>
+                <div class="language-tabs">
+                    <button class="lang-tab active" data-lang="en">English</button>
+                    <button class="lang-tab" data-lang="nl">Dutch</button>
+                    <button class="lang-tab" data-lang="tr">Turkish</button>
+                </div>
+                <div class="translations-grid" id="translationsGrid"></div>
+                <button class="btn-primary" id="saveTranslations">Save Translations</button>
+            </section>
+
+            <!-- Settings Tab -->
+            <section id="settings" class="tab-content">
+                <h1>Settings</h1>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label>Business Name</label>
+                        <input type="text" id="businessName">
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" id="businessAddress">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="businessPhone">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="businessEmail">
+                    </div>
+                    <div class="form-group">
+                        <label>Booking Time Slot Duration (minutes)</label>
+                        <input type="number" id="timeSlotDuration">
+                    </div>
+                    <button class="btn-primary" id="saveSettings">Save Settings</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="serviceModal">
+        <div class="modal-content">
+            <h2>Add/Edit Service</h2>
+            <form id="serviceForm">
+                <div class="form-group">
+                    <label>Service Name</label>
+                    <input type="text" id="serviceName" required>
+                </div>
+                <div class="form-group">
+                    <label>Duration (minutes)</label>
+                    <input type="number" id="serviceDuration" required>
+                </div>
+                <div class="form-group">
+                    <label>Price (€)</label>
+                    <input type="number" id="servicePrice" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="serviceDescription"></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-secondary" id="cancelService">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Service</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="/admin/dashboard.js"></script>
 </body>
 </html>
