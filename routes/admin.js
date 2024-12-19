@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
+const jwt = require('jsonwebtoken');
+const { authMiddleware } = require('../middleware/auth');
 const path = require('path');
 const fs = require('fs').promises;
-const jwt = require('jsonwebtoken');
 
 // Data file paths
 const SERVICES_FILE = path.join(__dirname, '../data/services.json');
@@ -34,43 +34,105 @@ async function writeJsonFile(filePath, data) {
     await fs.writeFile(filePath, JSON.stringify(data, null, 2));
 }
 
-// Login route (unprotected)
+// Admin login route
 router.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    
     try {
-        const { username, password } = req.body;
-        const users = await readJsonFile(USERS_FILE);
-        
-        const user = users.find(u => u.username === username && u.password === password);
-        
-        if (!user) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+        // For demo purposes, hardcoded credentials
+        const validCredentials = {
+            username: 'abdullah',
+            password: 'Dordtselaan44a'
+        };
+
+        if (username === validCredentials.username && password === validCredentials.password) {
+            const token = jwt.sign(
+                { id: 1, username, role: 'admin' },
+                process.env.JWT_SECRET || 'kapsalon-adem-secret-key-2024',
+                { expiresIn: '24h' }
+            );
+
+            res.cookie('adminToken', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'Lax',
+                maxAge: 24 * 60 * 60 * 1000,
+                path: '/',
+                domain: process.env.NODE_ENV === 'production' ? '.netlify.app' : 'localhost'
+            });
+
+            res.json({ 
+                message: 'Logged in successfully',
+                token,
+                user: { username, role: 'admin' }
+            });
+        } else {
+            res.status(401).json({ message: 'Invalid credentials' });
         }
-
-        // Create token
-        const token = jwt.sign(
-            { id: user.id, username: user.username },
-            process.env.JWT_SECRET,
-            { expiresIn: '1d' }
-        );
-
-        // Set token in cookie
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 24 * 60 * 60 * 1000 // 1 day
-        });
-
-        res.json({ message: 'Logged in successfully' });
     } catch (error) {
+        console.error('Login error:', error);
         res.status(500).json({ message: 'Error logging in' });
     }
 });
 
-// Protected routes
-router.use(auth);
+// Check auth status
+router.get('/check-auth', authMiddleware, (req, res) => {
+    res.json({ 
+        authenticated: true,
+        user: { username: req.user.username, role: req.user.role }
+    });
+});
+
+// Logout route
+router.post('/logout', (req, res) => {
+    res.clearCookie('adminToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Lax',
+        path: '/',
+        domain: process.env.NODE_ENV === 'production' ? '.netlify.app' : 'localhost'
+    });
+    res.json({ message: 'Logged out successfully' });
+});
+
+// Get dashboard data
+router.get('/dashboard', authMiddleware, async (req, res) => {
+    try {
+        // Mock data for demo
+        const data = {
+            todayBookings: 5,
+            pendingBookings: 3,
+            completedBookings: 2,
+            totalCustomers: 10,
+            recentBookings: [
+                {
+                    id: 1,
+                    date: new Date(),
+                    time: '14:00',
+                    customerName: 'John Doe',
+                    service: 'Haircut',
+                    status: 'Pending'
+                },
+                {
+                    id: 2,
+                    date: new Date(),
+                    time: '15:00',
+                    customerName: 'Jane Smith',
+                    service: 'Haircut & Beard',
+                    status: 'Confirmed'
+                }
+            ]
+        };
+        
+        res.json(data);
+    } catch (error) {
+        console.error('Dashboard error:', error);
+        res.status(500).json({ message: 'Error fetching dashboard data' });
+    }
+});
 
 // Dashboard Stats
-router.get('/dashboard/stats', async (req, res) => {
+router.get('/dashboard/stats', authMiddleware, async (req, res) => {
     try {
         const bookings = await readJsonFile(BOOKINGS_FILE);
         const today = new Date();
@@ -101,7 +163,7 @@ router.get('/dashboard/stats', async (req, res) => {
 });
 
 // Services Management
-router.get('/services', async (req, res) => {
+router.get('/services', authMiddleware, async (req, res) => {
     try {
         const services = await readJsonFile(SERVICES_FILE);
         res.json(services);
@@ -110,7 +172,7 @@ router.get('/services', async (req, res) => {
     }
 });
 
-router.post('/services', async (req, res) => {
+router.post('/services', authMiddleware, async (req, res) => {
     try {
         const services = await readJsonFile(SERVICES_FILE);
         const newService = {
@@ -125,7 +187,7 @@ router.post('/services', async (req, res) => {
     }
 });
 
-router.put('/services/:id', async (req, res) => {
+router.put('/services/:id', authMiddleware, async (req, res) => {
     try {
         const services = await readJsonFile(SERVICES_FILE);
         const index = services.findIndex(s => s.id === req.params.id);
@@ -140,7 +202,7 @@ router.put('/services/:id', async (req, res) => {
     }
 });
 
-router.delete('/services/:id', async (req, res) => {
+router.delete('/services/:id', authMiddleware, async (req, res) => {
     try {
         const services = await readJsonFile(SERVICES_FILE);
         const filteredServices = services.filter(s => s.id !== req.params.id);
@@ -152,7 +214,7 @@ router.delete('/services/:id', async (req, res) => {
 });
 
 // Settings Management
-router.get('/settings', async (req, res) => {
+router.get('/settings', authMiddleware, async (req, res) => {
     try {
         const settings = await readJsonFile(SETTINGS_FILE);
         res.json(settings);
@@ -161,7 +223,7 @@ router.get('/settings', async (req, res) => {
     }
 });
 
-router.post('/settings', async (req, res) => {
+router.post('/settings', authMiddleware, async (req, res) => {
     try {
         await writeJsonFile(SETTINGS_FILE, req.body);
         res.json(req.body);
@@ -171,7 +233,7 @@ router.post('/settings', async (req, res) => {
 });
 
 // Change Password
-router.post('/change-password', async (req, res) => {
+router.post('/change-password', authMiddleware, async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
         const users = await readJsonFile(USERS_FILE);
@@ -195,7 +257,7 @@ router.post('/change-password', async (req, res) => {
 });
 
 // Holidays Management
-router.get('/holidays', async (req, res) => {
+router.get('/holidays', authMiddleware, async (req, res) => {
     try {
         const holidays = await readJsonFile(HOLIDAYS_FILE);
         res.json(holidays);
@@ -204,7 +266,7 @@ router.get('/holidays', async (req, res) => {
     }
 });
 
-router.post('/holidays', async (req, res) => {
+router.post('/holidays', authMiddleware, async (req, res) => {
     try {
         const holidays = await readJsonFile(HOLIDAYS_FILE);
         const newHoliday = {
@@ -219,7 +281,7 @@ router.post('/holidays', async (req, res) => {
     }
 });
 
-router.delete('/holidays/:id', async (req, res) => {
+router.delete('/holidays/:id', authMiddleware, async (req, res) => {
     try {
         const holidays = await readJsonFile(HOLIDAYS_FILE);
         const filteredHolidays = holidays.filter(h => h.id !== req.params.id);
@@ -231,7 +293,7 @@ router.delete('/holidays/:id', async (req, res) => {
 });
 
 // Recent Bookings
-router.get('/dashboard/recent-bookings', async (req, res) => {
+router.get('/dashboard/recent-bookings', authMiddleware, async (req, res) => {
     try {
         const bookings = await readJsonFile(BOOKINGS_FILE);
         res.json(bookings
@@ -244,7 +306,7 @@ router.get('/dashboard/recent-bookings', async (req, res) => {
 });
 
 // Bookings Management
-router.get('/bookings', async (req, res) => {
+router.get('/bookings', authMiddleware, async (req, res) => {
     try {
         const { date, status } = req.query;
         const bookings = await readJsonFile(BOOKINGS_FILE);
@@ -281,7 +343,7 @@ router.get('/bookings', async (req, res) => {
     }
 });
 
-router.put('/bookings/:id/status', async (req, res) => {
+router.put('/bookings/:id/status', authMiddleware, async (req, res) => {
     try {
         const bookings = await readJsonFile(BOOKINGS_FILE);
         const index = bookings.findIndex(b => b.id === req.params.id);
@@ -297,7 +359,7 @@ router.put('/bookings/:id/status', async (req, res) => {
 });
 
 // Translation Management
-router.get('/translations', async (req, res) => {
+router.get('/translations', authMiddleware, async (req, res) => {
     try {
         const translations = await readJsonFile(TRANSLATIONS_FILE);
         res.json(translations);
@@ -306,7 +368,7 @@ router.get('/translations', async (req, res) => {
     }
 });
 
-router.post('/translations', async (req, res) => {
+router.post('/translations', authMiddleware, async (req, res) => {
     try {
         await writeJsonFile(TRANSLATIONS_FILE, req.body);
         res.status(201).json(req.body);

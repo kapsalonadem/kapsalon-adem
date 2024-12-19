@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3000;
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production' 
         ? ['https://ademkapsalon.netlify.app']
-        : ['http://localhost:3000'],
+        : ['http://localhost:3000', 'http://localhost:8080'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -28,17 +28,13 @@ const corsOptions = {
 app.use(helmet());
 app.use(cors(corsOptions));
 app.use(cookieParser());
-
-// Standard middleware
 app.use(express.json());
 app.use(express.static('public'));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-    const dbStatus = mongoose.connection.readyState === 1;
     res.json({
         status: 'ok',
-        database: dbStatus ? 'connected' : 'disconnected',
         environment: process.env.NODE_ENV,
         timestamp: new Date()
     });
