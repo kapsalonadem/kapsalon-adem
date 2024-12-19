@@ -2,243 +2,134 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="Kapsalon Adem - Premium barbershop in Rotterdam offering professional haircuts, shaves, and grooming services">
-    <meta name="theme-color" content="#1E1E1E">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kapsalon Adem - Premium Barbershop Rotterdam</title>
+    <meta name="description" content="Kapsalon Adem - Premium barbershop in Rotterdam offering professional haircuts, shaves, and grooming services">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="assets/images/favicon.png">
-    
-    <!-- Open Graph Tags -->
-    <meta property="og:title" content="Kapsalon Adem - Premium Barbershop Rotterdam">
-    <meta property="og:description" content="Experience premium barbering services in Rotterdam. Book your appointment today!">
-    <meta property="og:image" content="assets/images/og-image.jpg">
-    <meta property="og:url" content="https://kapsalonadem.nl">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation -->
     <nav class="navbar">
-        <div class="nav-container">
-            <a href="#" class="logo">
-                <img src="assets/images/logo.png" alt="Kapsalon Adem Logo">
-            </a>
+        <div class="container">
+            <a href="/" class="logo">Kapsalon Adem</a>
             <div class="nav-links">
-                <a href="#home" class="nav-link" data-translate="nav.home">Home</a>
-                <a href="#services" class="nav-link" data-translate="nav.services">Services</a>
-                <a href="#booking" class="nav-link booking-btn" data-translate="nav.booking">Book Now</a>
-                <a href="#gallery" class="nav-link" data-translate="nav.gallery">Gallery</a>
-                <a href="#contact" class="nav-link" data-translate="nav.contact">Contact</a>
+                <a href="#services">Diensten</a>
+                <a href="#about">Over Ons</a>
+                <a href="#contact">Contact</a>
+                <a href="/booking.html" class="btn-primary">Afspraak Maken</a>
             </div>
-            <div class="hamburger">
+            <button class="mobile-menu-btn">
                 <span></span>
                 <span></span>
                 <span></span>
-            </div>
+            </button>
         </div>
     </nav>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu">
-        <a href="#home" class="mobile-link" data-translate="nav.home">Home</a>
-        <a href="#services" class="mobile-link" data-translate="nav.services">Services</a>
-        <a href="#booking" class="mobile-link" data-translate="nav.booking">Book Now</a>
-        <a href="#gallery" class="mobile-link" data-translate="nav.gallery">Gallery</a>
-        <a href="#contact" class="mobile-link" data-translate="nav.contact">Contact</a>
-    </div>
-
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <h1 data-translate="hero.title">Kapsalon Adem</h1>
-            <p class="hero-subtitle" data-translate="hero.subtitle">Premium Barbering Experience in Rotterdam</p>
-            <a href="#booking" class="booking-btn" data-translate="hero.cta">Book Your Appointment</a>
-            <div class="hero-features">
-                <div class="feature">
-                    <i class="fas fa-cut"></i>
-                    <span data-translate="hero.feature1">Expert Styling</span>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-clock"></i>
-                    <span data-translate="hero.feature2">Flexible Hours</span>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-award"></i>
-                    <span data-translate="hero.feature3">Premium Service</span>
-                </div>
+    <header class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Premium Barbershop in Rotterdam</h1>
+                <p>Ervaar de kunst van traditioneel barbieren met moderne stijl</p>
+                <a href="/booking.html" class="btn-primary">Maak een Afspraak</a>
             </div>
         </div>
-    </section>
+    </header>
 
-    <!-- Services Section -->
     <section id="services" class="services">
         <div class="container">
-            <div class="section-header">
-                <h2 data-translate="services.title">Our Services</h2>
-                <p data-translate="services.subtitle">Professional Grooming Services</p>
-            </div>
+            <h2>Onze Diensten</h2>
             <div class="services-grid">
-                <div class="service-card" data-service="haircut">
-                    <div class="service-icon">
-                        <i class="fas fa-cut"></i>
-                    </div>
-                    <h3 data-translate="services.haircut">Haircut</h3>
-                    <p data-translate="services.haircutDesc">Professional haircut tailored to your style</p>
+                <div class="service-card">
+                    <i class="fas fa-cut"></i>
+                    <h3>Heren Knippen</h3>
+                    <p>Professionele knipbeurt inclusief styling</p>
                     <span class="price">€25</span>
-                    <a href="#booking" class="book-service-btn" data-translate="services.book">Book Now</a>
                 </div>
-                <div class="service-card" data-service="shave">
-                    <div class="service-icon">
-                        <i class="fas fa-razor"></i>
-                    </div>
-                    <h3 data-translate="services.shave">Shave</h3>
-                    <p data-translate="services.shaveDesc">Traditional hot towel shave</p>
+                <div class="service-card">
+                    <i class="fas fa-razor"></i>
+                    <h3>Baard Trimmen</h3>
+                    <p>Perfecte baard styling en verzorging</p>
+                    <span class="price">€15</span>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-fire"></i>
+                    <h3>Hot Towel Shave</h3>
+                    <p>Traditionele scheerbeurt met warme handdoek</p>
                     <span class="price">€20</span>
-                    <a href="#booking" class="book-service-btn" data-translate="services.book">Book Now</a>
-                </div>
-                <div class="service-card" data-service="facial">
-                    <div class="service-icon">
-                        <i class="fas fa-spa"></i>
-                    </div>
-                    <h3 data-translate="services.facial">Facial</h3>
-                    <p data-translate="services.facialDesc">Relaxing facial treatment</p>
-                    <span class="price">€30</span>
-                    <a href="#booking" class="book-service-btn" data-translate="services.book">Book Now</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Booking Section -->
-    <section id="booking" class="booking">
-        <div class="booking-container">
-            <div class="booking-info">
-                <h2 data-translate="booking.title">Book Your Appointment</h2>
-                <p data-translate="booking.subtitle">Choose your preferred service and time</p>
-                <div class="booking-steps">
-                    <div class="step">
-                        <span class="step-number">1</span>
-                        <p data-translate="booking.step1">Select Service</p>
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <h2>Over Kapsalon Adem</h2>
+                <p>Met meer dan 10 jaar ervaring in het vak, bieden wij de beste kappersservice in Rotterdam. Onze focus ligt op kwaliteit, stijl en klanttevredenheid.</p>
+                <div class="features">
+                    <div class="feature">
+                        <i class="fas fa-clock"></i>
+                        <h4>Flexibele Tijden</h4>
                     </div>
-                    <div class="step">
-                        <span class="step-number">2</span>
-                        <p data-translate="booking.step2">Choose Date & Time</p>
+                    <div class="feature">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h4>Centraal Gelegen</h4>
                     </div>
-                    <div class="step">
-                        <span class="step-number">3</span>
-                        <p data-translate="booking.step3">Confirm Booking</p>
+                    <div class="feature">
+                        <i class="fas fa-star"></i>
+                        <h4>Topkwaliteit</h4>
                     </div>
                 </div>
-            </div>
-            <div class="booking-form">
-                <form id="appointmentForm">
-                    <div class="form-group">
-                        <label for="service" class="form-label" data-translate="booking.service">Service</label>
-                        <select id="service" class="form-control" required>
-                            <option value="" data-translate="booking.selectService">Select a service</option>
-                            <option value="haircut" data-translate="services.haircut">Haircut - €25</option>
-                            <option value="shave" data-translate="services.shave">Shave - €20</option>
-                            <option value="facial" data-translate="services.facial">Facial - €30</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="date" class="form-label" data-translate="booking.date">Date</label>
-                        <input type="date" id="date" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="time" class="form-label" data-translate="booking.time">Time</label>
-                        <select id="time" class="form-control" required>
-                            <option value="" data-translate="booking.selectTime">Select time</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="name" class="form-label" data-translate="booking.name">Name</label>
-                        <input type="text" id="name" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone" class="form-label" data-translate="booking.phone">Phone</label>
-                        <input type="tel" id="phone" class="form-control" required>
-                    </div>
-                    <button type="submit" class="submit-btn" data-translate="booking.submit">
-                        Book Appointment
-                    </button>
-                </form>
             </div>
         </div>
     </section>
 
-    <!-- Contact Section -->
     <section id="contact" class="contact">
         <div class="container">
-            <div class="section-header">
-                <h2 data-translate="contact.title">Contact Us</h2>
-                <p data-translate="contact.subtitle">Get in touch with us</p>
-            </div>
-            <div class="contact-grid">
+            <div class="contact-content">
                 <div class="contact-info">
+                    <h2>Contact & Locatie</h2>
                     <div class="info-item">
                         <i class="fas fa-map-marker-alt"></i>
-                        <h3 data-translate="contact.address">Address</h3>
-                        <p>Dordtselaan 44A, 3073GC Rotterdam</p>
+                        <p>Dordtselaan 44a, 3073GC Rotterdam</p>
                     </div>
                     <div class="info-item">
                         <i class="fas fa-phone"></i>
-                        <h3 data-translate="contact.phone">Phone</h3>
-                        <p><a href="tel:+31612345678">+31 6 1234 5678</a></p>
+                        <p>+31 6 24 27 00 72</p>
                     </div>
                     <div class="info-item">
                         <i class="fas fa-clock"></i>
-                        <h3 data-translate="contact.hours">Opening Hours</h3>
-                        <p>Mon - Sat: 9:00 - 18:00</p>
-                        <p>Sunday: Closed</p>
+                        <p>Ma-Za: 09:00 - 18:00<br>Zo: Gesloten</p>
                     </div>
-                </div>
-                <div class="contact-map">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2461.7792!2d4.4876!3d51.8923!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c434a9a0f59b35%3A0x1f1b8e5c26d88f96!2sDordtselaan%2044A%2C%203073%20GC%20Rotterdam!5e0!3m2!1sen!2snl!4v1"
-                        width="100%"
-                        height="450"
-                        style="border:0;"
-                        allowfullscreen=""
-                        loading="lazy">
-                    </iframe>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-logo">
-                    <img src="assets/images/logo.png" alt="Kapsalon Adem Logo">
+                <div class="footer-info">
+                    <h3>Kapsalon Adem</h3>
+                    <p>Premium barbershop in Rotterdam</p>
                 </div>
-                <div class="footer-social">
-                    <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
-                </div>
-                <div class="footer-nav">
-                    <a href="#home" data-translate="nav.home">Home</a>
-                    <a href="#services" data-translate="nav.services">Services</a>
-                    <a href="#booking" data-translate="nav.booking">Book Now</a>
-                    <a href="#contact" data-translate="nav.contact">Contact</a>
+                <div class="footer-links">
+                    <a href="#services">Diensten</a>
+                    <a href="#about">Over Ons</a>
+                    <a href="#contact">Contact</a>
+                    <a href="/booking.html">Afspraak Maken</a>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Kapsalon Adem. All rights reserved.</p>
+                <p>&copy; 2024 Kapsalon Adem. Alle rechten voorbehouden.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="script.js"></script>
-    <script src="translations.js"></script>
 </body>
 </html>
