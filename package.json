@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "build": "cp -r assets public/ && cp index.html public/ && cp styles.css public/ && cp script.js public/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
