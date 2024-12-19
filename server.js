@@ -7,6 +7,8 @@ const moment = require('moment');
 const helmet = require('helmet');
 const schedule = require('node-schedule');
 const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -402,6 +404,75 @@ app.post('/api/bookings', async (req, res) => {
             error: error.message 
         });
     }
+});
+
+// Admin routes
+const adminRoutes = require('./routes/admin');
+app.use('/api/admin', adminRoutes);
+
+// Serve admin dashboard
+app.get('/admin', authenticateAdmin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin', 'dashboard.html'));
+});
+
+// Serve admin login page
+app.get('/admin/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin', 'login.html'));
+});
+
+// Admin authentication middleware
+function authenticateAdmin(req, res, next) {
+    const token = req.cookies.adminToken;
+    if (!token) {
+        return res.redirect('/admin/login');
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role !== 'admin') {
+            return res.redirect('/admin/login');
+        }
+        req.admin = decoded;
+        next();
+    } catch (error) {
+        res.redirect('/admin/login');
+    }
+}
+
+// Admin login route
+app.post('/api/admin/login', async (req, res) => {
+    const { username, password } = req.body;
+    
+    try {
+        // In production, use proper password hashing and database storage
+        if (username === process.env.ADMIN_USERNAME && 
+            password === process.env.ADMIN_PASSWORD) {
+            
+            const token = jwt.sign(
+                { id: 1, role: 'admin' },
+                process.env.JWT_SECRET,
+                { expiresIn: '24h' }
+            );
+
+            res.cookie('adminToken', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 24 * 60 * 60 * 1000 // 24 hours
+            });
+
+            res.json({ message: 'Logged in successfully' });
+        } else {
+            res.status(401).json({ message: 'Invalid credentials' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error logging in' });
+    }
+});
+
+// Admin logout route
+app.post('/api/admin/logout', (req, res) => {
+    res.clearCookie('adminToken');
+    res.json({ message: 'Logged out successfully' });
 });
 
 // Error handling middleware
