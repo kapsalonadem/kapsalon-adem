@@ -9,6 +9,7 @@ const schedule = require('node-schedule');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const path = require('path');
+const fs = require('fs').promises;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -420,28 +421,29 @@ app.get('/admin/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin', 'login.html'));
 });
 
-// Admin credentials
-const ADMIN_CREDENTIALS = {
-    username: 'abdullah',
-    password: 'Dordtselaan44a'
-};
-
-// Admin authentication middleware
-function authenticateAdmin(req, res, next) {
-    const token = req.cookies.adminToken;
-    if (!token) {
-        return res.redirect('/admin/login');
-    }
-
+// Function to read admin credentials
+async function getAdminCredentials() {
     try {
-        const decoded = jwt.verify(token, 'kapsalon-adem-secret-key');
-        if (decoded.role !== 'admin') {
-            return res.redirect('/admin/login');
-        }
-        req.admin = decoded;
-        next();
+        const data = await fs.readFile(path.join(__dirname, 'data', 'admin-credentials.json'), 'utf8');
+        return JSON.parse(data);
     } catch (error) {
-        res.redirect('/admin/login');
+        console.error('Error reading admin credentials:', error);
+        return null;
+    }
+}
+
+// Function to save admin credentials
+async function saveAdminCredentials(credentials) {
+    try {
+        await fs.writeFile(
+            path.join(__dirname, 'data', 'admin-credentials.json'),
+            JSON.stringify(credentials, null, 4),
+            'utf8'
+        );
+        return true;
+    } catch (error) {
+        console.error('Error saving admin credentials:', error);
+        return false;
     }
 }
 
@@ -450,9 +452,12 @@ app.post('/api/admin/login', async (req, res) => {
     const { username, password } = req.body;
     
     try {
-        if (username === ADMIN_CREDENTIALS.username && 
-            password === ADMIN_CREDENTIALS.password) {
-            
+        const credentials = await getAdminCredentials();
+        if (!credentials) {
+            return res.status(500).json({ message: 'Error reading credentials' });
+        }
+
+        if (username === credentials.username && password === credentials.password) {
             const token = jwt.sign(
                 { id: 1, role: 'admin' },
                 'kapsalon-adem-secret-key',
@@ -473,6 +478,57 @@ app.post('/api/admin/login', async (req, res) => {
         res.status(500).json({ message: 'Error logging in' });
     }
 });
+
+// Change password route
+app.post('/api/admin/change-password', authenticateAdmin, async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+
+    try {
+        const credentials = await getAdminCredentials();
+        if (!credentials) {
+            return res.status(500).json({ message: 'Error reading credentials' });
+        }
+
+        if (currentPassword !== credentials.password) {
+            return res.status(401).json({ message: 'Current password is incorrect' });
+        }
+
+        if (newPassword.length < 8) {
+            return res.status(400).json({ message: 'New password must be at least 8 characters long' });
+        }
+
+        credentials.password = newPassword;
+        const saved = await saveAdminCredentials(credentials);
+
+        if (saved) {
+            res.json({ message: 'Password changed successfully' });
+        } else {
+            res.status(500).json({ message: 'Error saving new password' });
+        }
+    } catch (error) {
+        console.error('Error changing password:', error);
+        res.status(500).json({ message: 'Error changing password' });
+    }
+});
+
+// Admin authentication middleware
+function authenticateAdmin(req, res, next) {
+    const token = req.cookies.adminToken;
+    if (!token) {
+        return res.redirect('/admin/login');
+    }
+
+    try {
+        const decoded = jwt.verify(token, 'kapsalon-adem-secret-key');
+        if (decoded.role !== 'admin') {
+            return res.redirect('/admin/login');
+        }
+        req.admin = decoded;
+        next();
+    } catch (error) {
+        res.redirect('/admin/login');
+    }
+}
 
 // Admin logout route
 app.post('/api/admin/logout', (req, res) => {

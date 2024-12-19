@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeHolidays();
     initializeTranslations();
     initializeSettings();
+    initializePasswordChange();
     loadDashboardStats();
 });
 
@@ -218,6 +219,62 @@ function initializeSettings() {
         };
 
         saveSettings(settings);
+    });
+}
+
+// Password Change
+function initializePasswordChange() {
+    const changePasswordForm = document.getElementById('changePasswordForm');
+    const passwordError = document.getElementById('passwordError');
+
+    changePasswordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        passwordError.textContent = '';
+        passwordError.style.display = 'none';
+
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        // Validate passwords
+        if (newPassword !== confirmPassword) {
+            passwordError.textContent = 'New passwords do not match';
+            passwordError.style.display = 'block';
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            passwordError.textContent = 'New password must be at least 8 characters long';
+            passwordError.style.display = 'block';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/admin/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    currentPassword,
+                    newPassword
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('Password changed successfully!');
+                changePasswordForm.reset();
+            } else {
+                passwordError.textContent = data.message;
+                passwordError.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error changing password:', error);
+            passwordError.textContent = 'Error changing password. Please try again.';
+            passwordError.style.display = 'block';
+        }
     });
 }
 

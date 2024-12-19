@@ -192,6 +192,26 @@
                         <input type="number" id="timeSlotDuration">
                     </div>
                     <button class="btn-primary" id="saveSettings">Save Settings</button>
+
+                    <hr style="margin: 2rem 0;">
+                    
+                    <h2>Change Password</h2>
+                    <form id="changePasswordForm">
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" id="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" id="newPassword" required minlength="8">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <input type="password" id="confirmPassword" required>
+                        </div>
+                        <div class="error-message" id="passwordError"></div>
+                        <button type="submit" class="btn-primary">Change Password</button>
+                    </form>
                 </div>
             </section>
         </main>
