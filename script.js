@@ -229,35 +229,158 @@ function updateContent(lang) {
     });
 }
 
-function handleBookingSubmission() {
-    const service = document.getElementById('service').value;
-    const barber = document.getElementById('barber').value;
-    const date = document.getElementById('date').value;
-    const time = document.getElementById('time').value;
-    const name = document.getElementById('name').value;
-    const phone = document.getElementById('phone').value;
-
-    if (!service || !barber || !date || !time || !name || !phone) {
-        alert(translations[currentLanguage].booking.form.fillAll || 'Please fill in all fields');
-        return;
-    }
-
-    // Create appointment object
-    const appointment = {
-        service,
-        barber,
-        date,
-        time,
-        name,
-        phone
-    };
-
-    console.log('Booking appointment:', appointment);
-    alert(translations[currentLanguage].booking.form.success || 'Booking successful! We will contact you to confirm your appointment.');
+// Offline booking support
+const offlineBookingSystem = {
+    storageKey: 'offlineBookings',
     
-    // Reset form
-    document.getElementById('booking-form').reset();
+    init() {
+        // Check for and sync any offline bookings when coming online
+        window.addEventListener('online', () => this.syncOfflineBookings());
+        
+        // Listen for offline status
+        window.addEventListener('offline', () => {
+            showNotification('You are offline. Bookings will be synced when connection is restored.');
+        });
+    },
+
+    async saveBookingLocally(bookingData) {
+        try {
+            const offlineBookings = this.getOfflineBookings();
+            offlineBookings.push({
+                ...bookingData,
+                offlineId: Date.now(),
+                timestamp: new Date().toISOString(),
+                synced: false
+            });
+            localStorage.setItem(this.storageKey, JSON.stringify(offlineBookings));
+            return true;
+        } catch (error) {
+            console.error('Error saving booking locally:', error);
+            return false;
+        }
+    },
+
+    getOfflineBookings() {
+        try {
+            return JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+        } catch {
+            return [];
+        }
+    },
+
+    async syncOfflineBookings() {
+        const offlineBookings = this.getOfflineBookings();
+        const unsynced = offlineBookings.filter(booking => !booking.synced);
+        
+        if (unsynced.length === 0) return;
+
+        showNotification(`Syncing ${unsynced.length} offline booking(s)...`);
+
+        for (const booking of unsynced) {
+            try {
+                const response = await fetch('/api/appointments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(booking)
+                });
+
+                if (response.ok) {
+                    booking.synced = true;
+                    showNotification(`Successfully synced booking for ${booking.name}`);
+                }
+            } catch (error) {
+                console.error('Error syncing offline booking:', error);
+            }
+        }
+
+        // Update local storage with sync status
+        localStorage.setItem(this.storageKey, JSON.stringify(offlineBookings));
+    }
+};
+
+// Enhanced booking submission with offline support
+async function handleBookingSubmission(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const bookingData = Object.fromEntries(formData.entries());
+
+    try {
+        if (navigator.onLine) {
+            // Online submission
+            const response = await fetch('/api/appointments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bookingData)
+            });
+
+            if (!response.ok) throw new Error('Booking submission failed');
+
+            showNotification('Booking confirmed successfully!');
+            form.reset();
+        } else {
+            // Offline submission
+            const saved = await offlineBookingSystem.saveBookingLocally(bookingData);
+            if (saved) {
+                showNotification('Booking saved offline. Will be synced when connection is restored.');
+                form.reset();
+            } else {
+                throw new Error('Failed to save booking offline');
+            }
+        }
+    } catch (error) {
+        console.error('Booking error:', error);
+        showNotification('There was an error processing your booking. Please try again or call us directly.');
+    }
 }
+
+// Initialize offline booking system
+offlineBookingSystem.init();
+
+// Notification system
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('fade-out');
+        setTimeout(() => notification.remove(), 500);
+    }, 3000);
+}
+
+// Add notification styles
+const style = document.createElement('style');
+style.textContent = `
+    .notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background: #333;
+        color: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+        opacity: 1;
+        transition: opacity 0.5s;
+    }
+    .notification.fade-out {
+        opacity: 0;
+    }
+    .notification.success {
+        background: #4CAF50;
+    }
+    .notification.error {
+        background: #f44336;
+    }
+    .notification.info {
+        background: #2196F3;
+    }
+`;
+document.head.appendChild(style);
 
 // Add animation on scroll
 window.addEventListener('scroll', function() {
