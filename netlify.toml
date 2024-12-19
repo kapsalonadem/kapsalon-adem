@@ -1,6 +1,6 @@
 [build]
-  publish = "public"
-  command = "mkdir -p public && npm run build"
+  publish = "."
+  command = ""
 
 # API proxy
 [[redirects]]
