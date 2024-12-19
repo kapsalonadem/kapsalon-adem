@@ -3,10 +3,10 @@
     --primary-color: #FFD700;
     --primary-dark: #B8860B;
     --secondary-color: #333;
-    --text-color: #333;
-    --text-light: #666;
-    --bg-color: #f5f5f5;
-    --contrast-text: #fff;
+    --text-color: #FFD700;
+    --text-light: #fff;
+    --bg-color: #1a1a1a;
+    --contrast-text: #FFD700;
     --error-color: #dc3545;
     --success-color: #28a745;
     --accent-color: #d4af37;
@@ -230,7 +230,7 @@ img {
 
 /* Navbar */
 .navbar {
-    background-color: var(--secondary-color);
+    background-color: rgba(26, 26, 26, 0.95);
     box-shadow: var(--shadow-md);
     position: fixed;
     width: 100%;
@@ -288,13 +288,13 @@ img {
 
 .nav-links a {
     text-decoration: none;
-    color: var(--text-color);
+    color: var(--text-light);
     font-weight: 500;
     transition: var(--transition);
 }
 
 .nav-links a:hover {
-    color: var(--accent-color);
+    color: var(--primary-color);
 }
 
 .booking-btn {
@@ -310,8 +310,8 @@ img {
 }
 
 .admin-btn {
-    background-color: #333;
-    color: #FFD700 !important;
+    background-color: var(--primary-color);
+    color: var(--bg-color) !important;
     padding: 8px 12px;
     border-radius: 4px;
     transition: all 0.3s ease;
@@ -322,7 +322,7 @@ img {
 }
 
 .admin-btn:hover {
-    background-color: #444;
+    background-color: var(--primary-dark);
     transform: translateY(-2px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
@@ -352,15 +352,14 @@ img {
 .hero {
     position: relative;
     height: 100vh;
-    min-height: 600px;
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-                url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=2070&q=80');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('/assets/images/barbershop-bg.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--text-color);
     text-align: center;
     padding: 0 20px;
 }
@@ -389,24 +388,16 @@ img {
 }
 
 .hero h1 {
-    font-size: 4rem;
-    font-weight: 700;
+    font-size: 3.5rem;
     margin-bottom: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    background: linear-gradient(45deg, #FFD700, #FFA500);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--primary-color);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    animation: goldShine 2s ease-in-out infinite alternate;
 }
 
 .hero-subtitle {
     font-size: 1.5rem;
     margin-bottom: 2rem;
-    color: #FFD700;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    color: var(--text-light);
     opacity: 0;
     animation: fadeInUp 1s ease-out forwards;
     animation-delay: 0.5s;
@@ -547,12 +538,14 @@ section {
 /* Services Section */
 .services {
     padding: 5rem 0;
-    background: var(--light-gray);
+    background-color: var(--bg-color);
+    color: var(--text-light);
 }
 
 .services h2 {
     text-align: center;
     margin-bottom: 3rem;
+    color: var(--primary-color);
 }
 
 .service-grid {
@@ -562,34 +555,38 @@ section {
 }
 
 .service-card {
-    background: var(--white);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
     padding: 2rem;
     text-align: center;
-    border-radius: 5px;
-    box-shadow: var(--shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
-}
-
-.service-card i {
-    font-size: 2rem;
-    color: var(--secondary-color);
-    margin-bottom: 1rem;
     transition: transform 0.3s ease;
 }
 
-.service-card:hover i {
-    transform: rotate(360deg);
+.service-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.service-card i {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.service-card h3 {
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.service-card p {
+    color: var(--text-light);
 }
 
 /* Booking Section */
 .booking {
     padding: 4rem 0;
-    background-color: var(--gray-50);
+    background-color: var(--bg-color);
+    color: var(--text-light);
 }
 
 .booking-progress {
@@ -996,11 +993,6 @@ section {
 
     .nav-menu.active {
         right: 0;
-    }
-
-    .nav-list {
-        flex-direction: column;
-        gap: 1.5rem;
     }
 
     .hamburger {

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Kapsalon Adem</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
     <style>
         :root {
             --primary-color: #FFD700;
@@ -32,6 +33,13 @@
             display: flex;
         }
 
+        .dashboard-container {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            height: 100vh;
+        }
+
         .sidebar {
             width: 250px;
             background-color: var(--secondary-color);
@@ -56,12 +64,14 @@
             margin-bottom: 0.5rem;
         }
 
-        .nav-menu {
+        .sidebar-nav ul {
             list-style: none;
             flex-grow: 1;
+            padding: 0;
+            margin: 0;
         }
 
-        .nav-item {
+        .sidebar-nav li {
             margin-bottom: 0.5rem;
         }
 
@@ -92,27 +102,24 @@
             width: calc(100% - 250px);
         }
 
-        .page-header {
+        .dashboard-header {
             margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .page-title {
+        .header-left {
             font-size: 1.5rem;
             color: var(--secondary-color);
         }
 
-        .card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+        .header-right {
+            font-size: 1rem;
+            color: var(--text-color);
         }
 
-        .grid {
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
@@ -149,7 +156,7 @@
             font-size: 0.875rem;
         }
 
-        .table-container {
+        .table-responsive {
             overflow-x: auto;
         }
 
@@ -249,7 +256,7 @@
                 padding: 1rem;
             }
 
-            .grid {
+            .stats-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -269,200 +276,215 @@
     </style>
 </head>
 <body>
-    <div class="hamburger">
-        <i class="fas fa-bars"></i>
-    </div>
-
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <img src="/assets/images/logo.png" alt="Kapsalon Adem Logo">
-            <h2>Admin Panel</h2>
-        </div>
-        <ul class="nav-menu">
-            <li class="nav-item">
-                <a href="#" class="nav-link active" data-page="dashboard">
-                    <i class="fas fa-chart-line"></i>
-                    Dashboard
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="bookings">
-                    <i class="fas fa-calendar-alt"></i>
-                    Bookings
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="services">
-                    <i class="fas fa-cut"></i>
-                    Services
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="barbers">
-                    <i class="fas fa-user"></i>
-                    Barbers
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="schedule">
-                    <i class="fas fa-clock"></i>
-                    Schedule
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="settings">
-                    <i class="fas fa-cog"></i>
-                    Settings
-                </a>
-            </li>
-            <li class="nav-item mt-auto">
-                <a href="#" class="nav-link" id="logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </a>
-            </li>
-        </ul>
-    </aside>
-
-    <main class="main-content">
-        <div class="page-header">
-            <h1 class="page-title">Dashboard</h1>
-            <div class="header-actions">
-                <button class="btn btn-primary">
-                    <i class="fas fa-plus"></i>
-                    New Booking
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/assets/images/logo.png" alt="Kapsalon Adem Logo" class="logo">
+                <button class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
             </div>
-        </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="#dashboard" class="nav-link active">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#bookings" class="nav-link">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Bookings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#services" class="nav-link">
+                            <i class="fas fa-cut"></i>
+                            <span>Services</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#settings" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="logout" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
 
-        <div class="grid">
-            <div class="stat-card">
-                <div class="stat-icon" style="background-color: rgba(40, 167, 69, 0.1); color: var(--success-color);">
-                    <i class="fas fa-calendar-check"></i>
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h1>Dashboard</h1>
                 </div>
-                <div class="stat-info">
-                    <h3>24</h3>
-                    <p>Today's Bookings</p>
+                <div class="header-right">
+                    <span class="admin-name">Welcome, <span id="adminUsername">Admin</span></span>
                 </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon" style="background-color: rgba(255, 193, 7, 0.1); color: var(--warning-color);">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>8</h3>
-                    <p>Pending Bookings</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon" style="background-color: rgba(23, 162, 184, 0.1); color: var(--info-color);">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>3</h3>
-                    <p>Active Barbers</p>
-                </div>
-            </div>
-        </div>
+            </header>
 
-        <div class="card">
-            <h2>Recent Bookings</h2>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Customer</th>
-                            <th>Service</th>
-                            <th>Date & Time</th>
-                            <th>Barber</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>John Doe</td>
-                            <td>Haircut & Beard</td>
-                            <td>Today, 14:30</td>
-                            <td>Adem</td>
-                            <td><span class="status-badge status-confirmed">Confirmed</span></td>
-                            <td>
-                                <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Mike Smith</td>
-                            <td>Haircut</td>
-                            <td>Today, 15:00</td>
-                            <td>Hasan</td>
-                            <td><span class="status-badge status-pending">Pending</span></td>
-                            <td>
-                                <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
+            <div class="dashboard-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <div class="stat-info">
+                            <h3>Today's Bookings</h3>
+                            <p id="todayBookings">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-clock"></i>
+                        <div class="stat-info">
+                            <h3>Pending</h3>
+                            <p id="pendingBookings">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle"></i>
+                        <div class="stat-info">
+                            <h3>Completed</h3>
+                            <p id="completedBookings">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <div class="stat-info">
+                            <h3>Total Customers</h3>
+                            <p id="totalCustomers">0</p>
+                        </div>
+                    </div>
+                </div>
 
-    <script>
-        // Check authentication on page load and periodically
+                <div class="recent-bookings">
+                    <h2>Recent Bookings</h2>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Customer</th>
+                                    <th>Service</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentBookingsTable">
+                                <!-- Bookings will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import config from '../config.js';
+
+        // Check authentication on page load
         async function checkAuth() {
             try {
                 const token = localStorage.getItem('adminToken');
-                const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
                 
-                const response = await fetch('/api/admin/check-auth', {
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                const response = await fetch(`${config.apiUrl}/api/admin/check-auth`, {
                     credentials: 'include',
                     headers
                 });
 
                 if (!response.ok) {
                     window.location.href = '/admin/login';
+                    return false;
                 }
+
+                const data = await response.json();
+                document.getElementById('adminUsername').textContent = data.user.username;
+                return true;
             } catch (error) {
                 console.error('Auth check error:', error);
                 window.location.href = '/admin/login';
+                return false;
             }
         }
 
-        // Check auth every 5 minutes
-        checkAuth();
-        setInterval(checkAuth, 5 * 60 * 1000);
+        // Load dashboard data
+        async function loadDashboardData() {
+            if (!(await checkAuth())) return;
 
-        // Mobile menu toggle
-        const hamburger = document.querySelector('.hamburger');
-        const sidebar = document.querySelector('.sidebar');
-        
-        hamburger?.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-        });
-
-        // Navigation
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                if (link.id === 'logout') {
-                    // Handle logout
-                    e.preventDefault();
-                    handleLogout();
-                    return;
+            try {
+                const token = localStorage.getItem('adminToken');
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
                 }
 
-                navLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-            });
-        });
+                const response = await fetch(`${config.apiUrl}/api/admin/dashboard`, {
+                    credentials: 'include',
+                    headers
+                });
 
-        // Logout handler
-        async function handleLogout() {
+                if (!response.ok) {
+                    throw new Error('Failed to load dashboard data');
+                }
+
+                const data = await response.json();
+                
+                // Update statistics
+                document.getElementById('todayBookings').textContent = data.todayBookings;
+                document.getElementById('pendingBookings').textContent = data.pendingBookings;
+                document.getElementById('completedBookings').textContent = data.completedBookings;
+                document.getElementById('totalCustomers').textContent = data.totalCustomers;
+
+                // Update recent bookings table
+                const tableBody = document.getElementById('recentBookingsTable');
+                tableBody.innerHTML = data.recentBookings.map(booking => `
+                    <tr>
+                        <td>${new Date(booking.date).toLocaleDateString()}</td>
+                        <td>${booking.time}</td>
+                        <td>${booking.customerName}</td>
+                        <td>${booking.service}</td>
+                        <td><span class="status ${booking.status.toLowerCase()}">${booking.status}</span></td>
+                        <td>
+                            <button class="action-btn" onclick="handleBooking('${booking.id}', 'confirm')">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="action-btn" onclick="handleBooking('${booking.id}', 'cancel')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        // Handle logout
+        document.getElementById('logout').addEventListener('click', async (e) => {
+            e.preventDefault();
             try {
                 localStorage.removeItem('adminToken');
                 
-                const response = await fetch('/api/admin/logout', {
+                await fetch(`${config.apiUrl}/api/admin/logout`, {
                     method: 'POST',
                     credentials: 'include'
                 });
@@ -472,7 +494,21 @@
                 console.error('Logout error:', error);
                 window.location.href = '/admin/login';
             }
-        }
+        });
+
+        // Mobile menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        const sidebar = document.querySelector('.sidebar');
+        
+        hamburger?.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // Load initial data
+        loadDashboardData();
+
+        // Refresh data periodically
+        setInterval(loadDashboardData, 30000); // Refresh every 30 seconds
     </script>
 </body>
 </html>

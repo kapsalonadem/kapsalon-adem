@@ -485,23 +485,52 @@ app.post('/api/admin/login', async (req, res) => {
 
         if (username === credentials.username && password === credentials.password) {
             const token = jwt.sign(
-                { id: 1, role: 'admin' },
-                'kapsalon-adem-secret-key',
+                { id: 1, username, role: 'admin' },
+                process.env.JWT_SECRET || 'kapsalon-adem-secret-key-2024',
                 { expiresIn: '24h' }
             );
 
+            // Set cookie for web browsers
             res.cookie('adminToken', token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                maxAge: 24 * 60 * 60 * 1000 // 24 hours
+                sameSite: 'Lax',
+                maxAge: 24 * 60 * 60 * 1000, // 24 hours
+                path: '/',
+                domain: process.env.NODE_ENV === 'production' ? '.netlify.app' : 'localhost'
             });
 
-            res.json({ message: 'Logged in successfully' });
+            // Also send token in response for API clients
+            res.json({ 
+                message: 'Logged in successfully',
+                token,
+                user: { username, role: 'admin' }
+            });
         } else {
             res.status(401).json({ message: 'Invalid credentials' });
         }
     } catch (error) {
+        console.error('Login error:', error);
         res.status(500).json({ message: 'Error logging in' });
+    }
+});
+
+// Add auth check endpoint
+app.get('/api/admin/check-auth', async (req, res) => {
+    const token = req.cookies.adminToken || req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'kapsalon-adem-secret-key-2024');
+        res.json({ 
+            authenticated: true,
+            user: { username: decoded.username, role: decoded.role }
+        });
+    } catch (error) {
+        res.status(401).json({ message: 'Invalid token' });
     }
 });
 
@@ -545,7 +574,7 @@ function authenticateAdmin(req, res, next) {
     }
 
     try {
-        const decoded = jwt.verify(token, 'kapsalon-adem-secret-key');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'kapsalon-adem-secret-key-2024');
         if (decoded.role !== 'admin') {
             return res.redirect('/admin/login');
         }
