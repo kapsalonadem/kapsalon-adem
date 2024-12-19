@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 // Security middleware
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production' 
-        ? ['https://kapsalon-adem.netlify.app']
+        ? ['https://ademkapsalon.netlify.app']
         : ['http://localhost:3000'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

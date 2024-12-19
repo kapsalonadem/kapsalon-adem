@@ -1,5 +1,5 @@
 const config = {
-    apiUrl: process.env.NODE_ENV === 'production'
+    apiUrl: window.location.hostname === 'ademkapsalon.netlify.app'
         ? 'https://kapsalon-adem.onrender.com'
         : 'http://localhost:3000'
 };
