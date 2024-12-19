@@ -16,8 +16,17 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Security middleware
+const corsOptions = {
+    origin: process.env.NODE_ENV === 'production' 
+        ? ['https://kapsalon-adem.netlify.app']
+        : ['http://localhost:3000'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
 app.use(helmet());
-app.use(cors()); // Allow all origins for now
+app.use(cors(corsOptions));
 app.use(cookieParser());
 
 // Standard middleware

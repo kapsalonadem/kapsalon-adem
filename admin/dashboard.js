@@ -1,3 +1,5 @@
+import config from '../config.js';
+
 // Mobile Menu Toggle
 function initializeMobileMenu() {
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
@@ -218,11 +220,12 @@ function initializePasswordChange() {
         }
 
         try {
-            const response = await fetch('/api/admin/change-password', {
+            const response = await fetch(`${config.apiUrl}/api/admin/change-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     currentPassword,
                     newPassword
@@ -249,7 +252,9 @@ function initializePasswordChange() {
 // Dashboard Stats
 async function loadDashboardStats() {
     try {
-        const response = await fetch('/api/admin/dashboard/stats');
+        const response = await fetch(`${config.apiUrl}/api/admin/dashboard/stats`, {
+            credentials: 'include'
+        });
         const stats = await response.json();
 
         document.getElementById('todayBookings').textContent = stats.todayBookings;
@@ -288,12 +293,15 @@ function closeModal(modalId) {
 }
 
 // API Functions
+const API_URL = config.apiUrl;
+
 async function saveService(serviceData) {
-    const response = await fetch('/api/admin/services', {
+    const response = await fetch(`${API_URL}/api/admin/services`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(serviceData)
     });
     return response.json();
@@ -301,7 +309,9 @@ async function saveService(serviceData) {
 
 async function loadServices() {
     try {
-        const response = await fetch('/api/admin/services');
+        const response = await fetch(`${API_URL}/api/admin/services`, {
+            credentials: 'include'
+        });
         const services = await response.json();
         const servicesTable = document.getElementById('servicesTable');
         
@@ -323,6 +333,120 @@ async function loadServices() {
     } catch (error) {
         console.error('Error loading services:', error);
     }
+}
+
+async function loadBookings() {
+    try {
+        const response = await fetch(`${API_URL}/api/admin/bookings`, {
+            credentials: 'include'
+        });
+        const bookings = await response.json();
+        const bookingsTable = document.getElementById('bookingsTable');
+        
+        bookingsTable.innerHTML = bookings.map(booking => `
+            <tr>
+                <td>${formatTime(booking.time)}</td>
+                <td>${booking.customer}</td>
+                <td>${booking.service}</td>
+                <td><span class="status-badge ${booking.status.toLowerCase()}">${booking.status}</span></td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading bookings:', error);
+    }
+}
+
+async function loadSchedule() {
+    try {
+        const response = await fetch(`${API_URL}/api/admin/schedule`, {
+            credentials: 'include'
+        });
+        const schedule = await response.json();
+        const scheduleGrid = document.querySelector('.schedule-grid');
+        
+        scheduleGrid.innerHTML = schedule.map(day => `
+            <div class="day-schedule">
+                <h2>${day.day}</h2>
+                <ul>
+                    ${day.timeSlots.map(timeSlot => `
+                        <li>
+                            <span>${formatTime(timeSlot.time)}</span>
+                            <span>${timeSlot.service}</span>
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading schedule:', error);
+    }
+}
+
+async function loadHolidays() {
+    try {
+        const response = await fetch(`${API_URL}/api/admin/holidays`, {
+            credentials: 'include'
+        });
+        const holidays = await response.json();
+        const holidaysTable = document.getElementById('holidaysTable');
+        
+        holidaysTable.innerHTML = holidays.map(holiday => `
+            <tr>
+                <td>${holiday.date}</td>
+                <td>${holiday.reason}</td>
+                <td>
+                    <button class="btn-secondary" onclick="deleteHoliday(${holiday.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading holidays:', error);
+    }
+}
+
+async function loadTranslations() {
+    try {
+        const response = await fetch(`${API_URL}/api/admin/translations`, {
+            credentials: 'include'
+        });
+        const translations = await response.json();
+        const translationFields = document.getElementById('translationFields');
+        
+        translationFields.innerHTML = translations.map(translation => `
+            <div class="translation-field">
+                <label>${translation.label}</label>
+                <input type="text" value="${translation.value}" />
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading translations:', error);
+    }
+}
+
+async function saveSettings(settings) {
+    const response = await fetch(`${API_URL}/api/admin/settings`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(settings)
+    });
+    return response.json();
+}
+
+async function saveHoliday(holiday) {
+    const response = await fetch(`${API_URL}/api/admin/holidays`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(holiday)
+    });
+    return response.json();
 }
 
 // Initialize all components
