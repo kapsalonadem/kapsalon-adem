@@ -313,7 +313,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="logout" class="nav-link">
+                        <a href="#" id="logoutBtn" class="nav-link">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Logout</span>
                         </a>
@@ -395,17 +395,12 @@
         async function checkAuth() {
             try {
                 const token = localStorage.getItem('adminToken');
-                const headers = {
-                    'Content-Type': 'application/json'
-                };
-                
-                if (token) {
-                    headers['Authorization'] = `Bearer ${token}`;
-                }
-
-                const response = await fetch(`${config.apiUrl}/api/admin/check-auth`, {
-                    credentials: 'include',
-                    headers
+                const response = await fetch(`${config.apiUrl}${config.adminEndpoints.checkAuth}`, {
+                    ...config.fetchOptions,
+                    headers: {
+                        ...config.defaultHeaders,
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
 
                 if (!response.ok) {
@@ -429,17 +424,12 @@
 
             try {
                 const token = localStorage.getItem('adminToken');
-                const headers = {
-                    'Content-Type': 'application/json'
-                };
-                
-                if (token) {
-                    headers['Authorization'] = `Bearer ${token}`;
-                }
-
-                const response = await fetch(`${config.apiUrl}/api/admin/dashboard`, {
-                    credentials: 'include',
-                    headers
+                const response = await fetch(`${config.apiUrl}${config.adminEndpoints.dashboard}`, {
+                    ...config.fetchOptions,
+                    headers: {
+                        ...config.defaultHeaders,
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
 
                 if (!response.ok) {
@@ -448,67 +438,55 @@
 
                 const data = await response.json();
                 
-                // Update statistics
+                // Update stats
                 document.getElementById('todayBookings').textContent = data.todayBookings;
                 document.getElementById('pendingBookings').textContent = data.pendingBookings;
                 document.getElementById('completedBookings').textContent = data.completedBookings;
                 document.getElementById('totalCustomers').textContent = data.totalCustomers;
 
                 // Update recent bookings table
-                const tableBody = document.getElementById('recentBookingsTable');
-                tableBody.innerHTML = data.recentBookings.map(booking => `
+                const tbody = document.getElementById('recentBookingsTable');
+                tbody.innerHTML = data.recentBookings.map(booking => `
                     <tr>
                         <td>${new Date(booking.date).toLocaleDateString()}</td>
                         <td>${booking.time}</td>
                         <td>${booking.customerName}</td>
                         <td>${booking.service}</td>
-                        <td><span class="status ${booking.status.toLowerCase()}">${booking.status}</span></td>
+                        <td><span class="status-badge ${booking.status.toLowerCase()}">${booking.status}</span></td>
                         <td>
-                            <button class="action-btn" onclick="handleBooking('${booking.id}', 'confirm')">
-                                <i class="fas fa-check"></i>
+                            <button class="action-btn edit-btn" onclick="editBooking('${booking.id}')">
+                                <i class="fas fa-edit"></i>
                             </button>
-                            <button class="action-btn" onclick="handleBooking('${booking.id}', 'cancel')">
-                                <i class="fas fa-times"></i>
+                            <button class="action-btn delete-btn" onclick="deleteBooking('${booking.id}')">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </td>
                     </tr>
                 `).join('');
+
             } catch (error) {
-                console.error('Error loading dashboard data:', error);
+                console.error('Dashboard data error:', error);
+                alert('Error loading dashboard data. Please try again.');
             }
         }
 
         // Handle logout
-        document.getElementById('logout').addEventListener('click', async (e) => {
-            e.preventDefault();
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
             try {
-                localStorage.removeItem('adminToken');
-                
-                await fetch(`${config.apiUrl}/api/admin/logout`, {
+                const response = await fetch(`${config.apiUrl}${config.adminEndpoints.logout}`, {
                     method: 'POST',
-                    credentials: 'include'
+                    ...config.fetchOptions
                 });
 
+                localStorage.removeItem('adminToken');
                 window.location.href = '/admin/login';
             } catch (error) {
                 console.error('Logout error:', error);
-                window.location.href = '/admin/login';
             }
         });
 
-        // Mobile menu toggle
-        const hamburger = document.querySelector('.hamburger');
-        const sidebar = document.querySelector('.sidebar');
-        
-        hamburger?.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-        });
-
-        // Load initial data
-        loadDashboardData();
-
-        // Refresh data periodically
-        setInterval(loadDashboardData, 30000); // Refresh every 30 seconds
+        // Initialize dashboard
+        window.addEventListener('load', loadDashboardData);
     </script>
 </body>
 </html>
