@@ -36,6 +36,11 @@ async function writeJsonFile(filePath, data) {
 
 // Admin login route
 router.post('/login', async (req, res) => {
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+        return res.status(204).end();
+    }
+
     const { username, password } = req.body;
     
     try {
@@ -52,15 +57,17 @@ router.post('/login', async (req, res) => {
                 { expiresIn: '24h' }
             );
 
+            // Set cookie for web browsers
             res.cookie('adminToken', token, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'Lax',
+                secure: true,
+                sameSite: 'None',
                 maxAge: 24 * 60 * 60 * 1000,
                 path: '/',
-                domain: process.env.NODE_ENV === 'production' ? '.netlify.app' : 'localhost'
+                domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : 'localhost'
             });
 
+            // Also send token in response for API clients
             res.json({ 
                 message: 'Logged in successfully',
                 token,

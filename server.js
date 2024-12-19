@@ -17,16 +17,37 @@ const PORT = process.env.PORT || 3000;
 
 // Security middleware
 const corsOptions = {
-    origin: process.env.NODE_ENV === 'production' 
-        ? ['https://ademkapsalon.netlify.app']
-        : ['http://localhost:3000', 'http://localhost:8080'],
+    origin: ['https://ademkapsalon.netlify.app', 'http://localhost:3000', 'http://localhost:8080'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Set-Cookie'],
+    preflightContinue: true,
+    optionsSuccessStatus: 204
 };
 
-app.use(helmet());
 app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
+
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginOpenerPolicy: { policy: "unsafe-none" },
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            connectSrc: ["'self'", "https://ademkapsalon.netlify.app", "https://kapsalon-adem.onrender.com"],
+            imgSrc: ["'self'", "data:", "https:"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+            fontSrc: ["'self'", "https:", "data:"],
+            formAction: ["'self'"],
+            upgradeInsecureRequests: null
+        }
+    }
+}));
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.static('public'));

@@ -3,7 +3,12 @@ const config = {
         ? 'https://kapsalon-adem.onrender.com'
         : 'http://localhost:3000',
     defaultHeaders: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+    },
+    fetchOptions: {
+        credentials: 'include',
+        mode: 'cors'
     },
     adminEndpoints: {
         login: '/api/admin/login',

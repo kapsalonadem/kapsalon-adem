@@ -163,7 +163,7 @@
 
     <script type="module">
         import config from '../config.js';
-        
+
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
         const loadingIcon = document.getElementById('loadingIcon');
@@ -172,8 +172,12 @@
         // Check if already logged in
         async function checkAuth() {
             try {
-                const response = await fetch(`${config.apiUrl}/api/admin/check-auth`, {
-                    credentials: 'include'
+                const response = await fetch(`${config.apiUrl}${config.adminEndpoints.checkAuth}`, {
+                    ...config.fetchOptions,
+                    headers: {
+                        ...config.defaultHeaders,
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    }
                 });
 
                 if (response.ok) {
@@ -199,12 +203,10 @@
             const password = document.getElementById('password').value;
 
             try {
-                const response = await fetch(`${config.apiUrl}/api/admin/login`, {
+                const response = await fetch(`${config.apiUrl}${config.adminEndpoints.login}`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    credentials: 'include',
+                    ...config.fetchOptions,
+                    headers: config.defaultHeaders,
                     body: JSON.stringify({ username, password })
                 });
 
@@ -219,13 +221,12 @@
                 } else {
                     errorMessage.textContent = data.message || 'Invalid username or password';
                     errorMessage.classList.add('show');
-                    submitButton.disabled = false;
-                    loadingIcon.classList.remove('show');
                 }
             } catch (error) {
                 console.error('Login error:', error);
                 errorMessage.textContent = 'Connection error. Please try again.';
                 errorMessage.classList.add('show');
+            } finally {
                 submitButton.disabled = false;
                 loadingIcon.classList.remove('show');
             }
