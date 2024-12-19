@@ -420,6 +420,12 @@ app.get('/admin/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin', 'login.html'));
 });
 
+// Admin credentials
+const ADMIN_CREDENTIALS = {
+    username: 'abdullah',
+    password: 'Dordtselaan44a'
+};
+
 // Admin authentication middleware
 function authenticateAdmin(req, res, next) {
     const token = req.cookies.adminToken;
@@ -428,7 +434,7 @@ function authenticateAdmin(req, res, next) {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, 'kapsalon-adem-secret-key');
         if (decoded.role !== 'admin') {
             return res.redirect('/admin/login');
         }
@@ -444,13 +450,12 @@ app.post('/api/admin/login', async (req, res) => {
     const { username, password } = req.body;
     
     try {
-        // In production, use proper password hashing and database storage
-        if (username === process.env.ADMIN_USERNAME && 
-            password === process.env.ADMIN_PASSWORD) {
+        if (username === ADMIN_CREDENTIALS.username && 
+            password === ADMIN_CREDENTIALS.password) {
             
             const token = jwt.sign(
                 { id: 1, role: 'admin' },
-                process.env.JWT_SECRET,
+                'kapsalon-adem-secret-key',
                 { expiresIn: '24h' }
             );
 
