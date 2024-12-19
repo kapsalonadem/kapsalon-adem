@@ -1,6 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM Content Loaded');
     
+    // Initialize AOS
+    AOS.init({
+        duration: 800,
+        offset: 50,
+        once: true,
+        mirror: false,
+        anchorPlacement: 'top-bottom'
+    });
+    
     // Initialize the booking system
     initializeBookingSystem();
     
@@ -9,13 +18,40 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle smooth scrolling
     initializeSmoothScroll();
-
+    
     // Initialize language switching
     initializeLanguageSelector();
+    
+    // Handle responsive navigation
+    handleResponsiveNav();
     
     // Update content with current language
     updateContent(currentLanguage);
 });
+
+function handleResponsiveNav() {
+    const navbar = document.querySelector('.navbar');
+    let lastScroll = 0;
+
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        
+        if (currentScroll <= 0) {
+            navbar.classList.remove('scroll-up');
+            return;
+        }
+        
+        if (currentScroll > lastScroll && !navbar.classList.contains('scroll-down')) {
+            navbar.classList.remove('scroll-up');
+            navbar.classList.add('scroll-down');
+        } else if (currentScroll < lastScroll && navbar.classList.contains('scroll-down')) {
+            navbar.classList.remove('scroll-down');
+            navbar.classList.add('scroll-up');
+        }
+        
+        lastScroll = currentScroll;
+    });
+}
 
 function initializeBookingSystem() {
     console.log('Initializing booking system...');
@@ -115,72 +151,11 @@ async function generateTimeSlots() {
     const interval = 30; // 30 minutes
 
     try {
-        // Get booked appointments
-        const url = `https://kapsalon-adem.onrender.com/api/appointments/${selectedDate}`;
-        console.log('Fetching appointments from:', url);
-        
-        const response = await fetch(url);
-        console.log('Server response:', response);
-        
-        let bookedAppointments = [];
-        
-        if (response.ok) {
-            const data = await response.json();
-            console.log('Server data:', data);
-            if (Array.isArray(data)) {
-                bookedAppointments = data;
-            }
-        }
-        
-        console.log('Processed booked appointments:', bookedAppointments);
-
         // Clear and re-enable select
         timeSelect.disabled = false;
         timeSelect.innerHTML = `<option value="">${translations[currentLanguage].booking.form.selectTime || 'Select time'}</option>`;
 
-        // Generate all possible time slots
-        let availableSlots = 0;
-        for (let time = startTime; time <= endTime - interval; time += interval) {
-            const hours = Math.floor(time / 60);
-            const minutes = time % 60;
-            const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-            
-            // Check if this time slot is available
-            const isBooked = bookedAppointments.some(apt => 
-                apt.time === timeString && 
-                apt.barber === selectedBarber
-            );
-
-            console.log(`Time slot ${timeString} is ${isBooked ? 'booked' : 'available'}`);
-
-            if (!isBooked) {
-                const option = document.createElement('option');
-                option.value = timeString;
-                option.textContent = timeString;
-                timeSelect.appendChild(option);
-                availableSlots++;
-            }
-        }
-
-        console.log('Total available slots:', availableSlots);
-
-        // If no slots are available, show message
-        if (availableSlots === 0) {
-            const option = document.createElement('option');
-            option.value = "";
-            option.disabled = true;
-            option.textContent = translations[currentLanguage].booking.form.noTimeSlots || 'No available time slots';
-            timeSelect.appendChild(option);
-        }
-
-    } catch (error) {
-        console.error('Error fetching appointments:', error);
-        
-        // In case of error, show all time slots
-        timeSelect.disabled = false;
-        timeSelect.innerHTML = `<option value="">${translations[currentLanguage].booking.form.selectTime || 'Select time'}</option>`;
-        
-        // Generate all time slots without checking availability
+        // Generate all time slots
         for (let time = startTime; time <= endTime - interval; time += interval) {
             const hours = Math.floor(time / 60);
             const minutes = time % 60;
@@ -191,70 +166,42 @@ async function generateTimeSlots() {
             option.textContent = timeString;
             timeSelect.appendChild(option);
         }
+
+    } catch (error) {
+        console.error('Error generating time slots:', error);
+        timeSelect.disabled = false;
+        timeSelect.innerHTML = `<option value="">${translations[currentLanguage].booking.form.error || 'Error loading time slots'}</option>`;
     }
 }
 
 async function handleBookingSubmission() {
     const service = document.getElementById('service').value;
+    const barber = document.getElementById('barber').value;
     const date = document.getElementById('date').value;
     const time = document.getElementById('time').value;
     const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
     const phone = document.getElementById('phone').value;
-    const barber = document.getElementById('barber').value;
 
-    const appointmentData = {
+    if (!service || !barber || !date || !time || !name || !phone) {
+        alert(translations[currentLanguage].booking.form.fillAll || 'Please fill in all fields');
+        return;
+    }
+
+    // Create appointment object
+    const appointment = {
         service,
+        barber,
         date,
         time,
         name,
-        email,
-        phone,
-        barber,
-        language: currentLanguage
+        phone
     };
 
-    try {
-        // First check availability
-        const availabilityResponse = await fetch('https://kapsalon-adem.onrender.com/api/check-availability', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                date: appointmentData.date,
-                time: appointmentData.time,
-                barber: appointmentData.barber
-            }),
-        });
-
-        const availabilityData = await availabilityResponse.json();
-
-        if (!availabilityData.available) {
-            alert(translations[currentLanguage].booking.timeNotAvailable || 'This time slot is not available. Please choose another time.');
-            return;
-        }
-
-        const response = await fetch('https://kapsalon-adem.onrender.com/api/appointments', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(appointmentData)
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            alert(translations[currentLanguage].booking.success || 'Appointment confirmed! Check your email for details.');
-            document.getElementById('appointmentForm').reset();
-        } else {
-            const error = await response.json();
-            alert(translations[currentLanguage].booking.error || 'Error creating appointment. Please try again.');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert(translations[currentLanguage].booking.error || 'Error creating appointment. Please try again.');
-    }
+    console.log('Booking appointment:', appointment);
+    alert(translations[currentLanguage].booking.form.success || 'Booking successful! We will contact you to confirm your appointment.');
+    
+    // Reset form
+    document.getElementById('appointmentForm').reset();
 }
 
 function initializeMobileMenu() {
