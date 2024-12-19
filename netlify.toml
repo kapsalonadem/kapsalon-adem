@@ -1,5 +1,5 @@
 [build]
-  publish = "/"
+  publish = "."
   command = ""
 
 # API proxy
@@ -18,15 +18,13 @@
 # Admin routes
 [[redirects]]
   from = "/admin"
-  to = "/admin/index.html"
+  to = "/admin.html"
   status = 200
-  force = true
 
 [[redirects]]
-  from = "/admin/login"
-  to = "/admin/login.html"
+  from = "/admin/*"
+  to = "/admin.html"
   status = 200
-  force = true
 
 # SPA fallback
 [[redirects]]
@@ -34,6 +32,3 @@
   to = "/index.html"
   status = 200
   force = true
-
-[build.environment]
-  NODE_VERSION = "18"
