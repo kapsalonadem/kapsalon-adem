@@ -10,19 +10,22 @@
   headers = {Access-Control-Allow-Origin = "*"}
 
 [[redirects]]
+  from = "/admin/login"
+  to = "/admin/login.html"
+  status = 200
+
+[[redirects]]
   from = "/admin"
   to = "/admin/index.html"
   status = 200
+  force = true
+  conditions = {Role = ["admin"]}
 
 [[redirects]]
-  from = "/admin/*"
-  to = "/admin/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/*"
+  from = "/"
   to = "/index.html"
   status = 200
+  force = true
 
 [build.environment]
   NODE_VERSION = "18"

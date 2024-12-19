@@ -169,6 +169,24 @@
         const loadingIcon = document.getElementById('loadingIcon');
         const submitButton = loginForm.querySelector('button[type="submit"]');
 
+        // Check if already logged in
+        async function checkAuth() {
+            try {
+                const response = await fetch(`${config.apiUrl}/api/admin/check-auth`, {
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    window.location.href = '/admin';
+                }
+            } catch (error) {
+                console.error('Auth check error:', error);
+            }
+        }
+
+        // Initial auth check
+        checkAuth();
+
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -190,9 +208,16 @@
                     body: JSON.stringify({ username, password })
                 });
 
+                const data = await response.json();
+
                 if (response.ok) {
+                    // Store token in localStorage as backup
+                    if (data.token) {
+                        localStorage.setItem('adminToken', data.token);
+                    }
                     window.location.href = '/admin';
                 } else {
+                    errorMessage.textContent = data.message || 'Invalid username or password';
                     errorMessage.classList.add('show');
                     submitButton.disabled = false;
                     loadingIcon.classList.remove('show');

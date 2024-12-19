@@ -409,11 +409,35 @@
     </main>
 
     <script>
+        // Check authentication on page load and periodically
+        async function checkAuth() {
+            try {
+                const token = localStorage.getItem('adminToken');
+                const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+                
+                const response = await fetch('/api/admin/check-auth', {
+                    credentials: 'include',
+                    headers
+                });
+
+                if (!response.ok) {
+                    window.location.href = '/admin/login';
+                }
+            } catch (error) {
+                console.error('Auth check error:', error);
+                window.location.href = '/admin/login';
+            }
+        }
+
+        // Check auth every 5 minutes
+        checkAuth();
+        setInterval(checkAuth, 5 * 60 * 1000);
+
         // Mobile menu toggle
         const hamburger = document.querySelector('.hamburger');
         const sidebar = document.querySelector('.sidebar');
         
-        hamburger.addEventListener('click', () => {
+        hamburger?.addEventListener('click', () => {
             sidebar.classList.toggle('active');
         });
 
@@ -436,37 +460,19 @@
         // Logout handler
         async function handleLogout() {
             try {
+                localStorage.removeItem('adminToken');
+                
                 const response = await fetch('/api/admin/logout', {
                     method: 'POST',
                     credentials: 'include'
                 });
 
-                if (response.ok) {
-                    window.location.href = '/admin/login';
-                }
+                window.location.href = '/admin/login';
             } catch (error) {
                 console.error('Logout error:', error);
-            }
-        }
-
-        // Check authentication status
-        async function checkAuth() {
-            try {
-                const response = await fetch('/api/admin/check-auth', {
-                    credentials: 'include'
-                });
-
-                if (!response.ok) {
-                    window.location.href = '/admin/login';
-                }
-            } catch (error) {
-                console.error('Auth check error:', error);
                 window.location.href = '/admin/login';
             }
         }
-
-        // Initial auth check
-        checkAuth();
     </script>
 </body>
 </html>
