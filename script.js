@@ -4,12 +4,230 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize AOS
     AOS.init({
         duration: 800,
-        offset: 50,
-        once: true,
-        mirror: false,
-        anchorPlacement: 'top-bottom'
+        once: true
     });
-    
+
+    // DOM Elements
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    const bookingForm = document.getElementById('booking-form');
+    const timeSlots = document.getElementById('time-slots');
+    const calendar = document.getElementById('calendar');
+
+    // Mobile Navigation
+    hamburger?.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+    });
+
+    // Initialize FullCalendar
+    let calendarInstance = null;
+    if (calendar) {
+        calendarInstance = new FullCalendar.Calendar(calendar, {
+            initialView: 'dayGridMonth',
+            selectable: true,
+            selectMirror: true,
+            weekends: true,
+            businessHours: {
+                daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+                startTime: '09:00',
+                endTime: '18:00',
+            },
+            select: handleDateSelect,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek'
+            }
+        });
+        calendarInstance.render();
+    }
+
+    // Available time slots
+    const timeSlotsList = [
+        '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+        '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+        '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'
+    ];
+
+    // Handle date selection
+    async function handleDateSelect(selectInfo) {
+        const selectedDate = selectInfo.startStr;
+        document.getElementById('date').value = selectedDate;
+        
+        // Clear previous time slots
+        timeSlots.innerHTML = '';
+        
+        // Get available slots for the selected date
+        const availableSlots = await getAvailableTimeSlots(selectedDate);
+        
+        // Create time slot buttons
+        timeSlotsList.forEach(time => {
+            const isAvailable = availableSlots.includes(time);
+            const slot = document.createElement('button');
+            slot.type = 'button';
+            slot.className = `time-slot ${isAvailable ? '' : 'disabled'}`;
+            slot.textContent = time;
+            slot.disabled = !isAvailable;
+            
+            if (isAvailable) {
+                slot.addEventListener('click', () => handleTimeSlotSelect(slot, time));
+            }
+            
+            timeSlots.appendChild(slot);
+        });
+    }
+
+    // Handle time slot selection
+    function handleTimeSlotSelect(slot, time) {
+        // Remove previous selection
+        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+        
+        // Add selection to clicked slot
+        slot.classList.add('selected');
+        
+        // Update hidden time input
+        const timeInput = document.createElement('input');
+        timeInput.type = 'hidden';
+        timeInput.name = 'time';
+        timeInput.value = time;
+        
+        // Replace existing time input or add new one
+        const existingTimeInput = bookingForm.querySelector('input[name="time"]');
+        if (existingTimeInput) {
+            existingTimeInput.remove();
+        }
+        bookingForm.appendChild(timeInput);
+    }
+
+    // Get available time slots for a date
+    async function getAvailableTimeSlots(date) {
+        try {
+            const response = await fetch(`/api/available-slots?date=${date}`);
+            if (response.ok) {
+                return await response.json();
+            }
+            return timeSlotsList; // Return all slots if API fails
+        } catch (error) {
+            console.error('Error fetching available slots:', error);
+            return timeSlotsList; // Return all slots if API fails
+        }
+    }
+
+    // Form submission
+    if (bookingForm) {
+        bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitButton = bookingForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
+            
+            // Get form data
+            const formData = new FormData(bookingForm);
+            const bookingData = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+                
+                if (response.ok) {
+                    // Show success message
+                    showNotification('Booking confirmed! Check your email for details.', 'success');
+                    bookingForm.reset();
+                    timeSlots.innerHTML = '';
+                    calendarInstance.unselect();
+                } else {
+                    // Show error message
+                    const error = await response.json();
+                    showNotification(error.message || 'Booking failed. Please try again.', 'error');
+                }
+            } catch (error) {
+                console.error('Booking error:', error);
+                showNotification('Network error. Please try again.', 'error');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Book Now';
+            }
+        });
+    }
+
+    // Show notification
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => notification.classList.add('show'), 100);
+        
+        // Remove after 5 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
+    }
+
+    // Language selector
+    const langSelector = document.querySelector('.language-selector');
+    const currentLang = document.querySelector('.current-lang');
+    const langDropdown = document.querySelector('.lang-dropdown');
+
+    if (langSelector && currentLang && langDropdown) {
+        currentLang.addEventListener('click', () => {
+            langDropdown.classList.toggle('show');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!langSelector.contains(e.target)) {
+                langDropdown.classList.remove('show');
+            }
+        });
+
+        langDropdown.addEventListener('click', (e) => {
+            const langItem = e.target.closest('li');
+            if (langItem) {
+                const lang = langItem.dataset.lang;
+                setLanguage(lang);
+                updateLanguageUI(lang);
+                langDropdown.classList.remove('show');
+            }
+        });
+    }
+
+    // Update language UI
+    function updateLanguageUI(lang) {
+        const currentFlag = currentLang.querySelector('img');
+        const currentText = currentLang.querySelector('span');
+        const selectedLang = langDropdown.querySelector(`[data-lang="${lang}"]`);
+        
+        if (currentFlag && currentText && selectedLang) {
+            currentFlag.src = selectedLang.querySelector('img').src;
+            currentText.textContent = lang.toUpperCase();
+            
+            langDropdown.querySelectorAll('li').forEach(li => {
+                li.classList.toggle('active', li.dataset.lang === lang);
+            });
+        }
+    }
+
+    // Set language and translate
+    function setLanguage(lang) {
+        localStorage.setItem('language', lang);
+        translatePage(lang);
+    }
+
+    // Initialize language
+    const savedLang = localStorage.getItem('language') || 'nl';
+    setLanguage(savedLang);
+    updateLanguageUI(savedLang);
+
     // Initialize all components
     initializeBookingSystem();
     initializeMobileMenu();
@@ -466,9 +684,3 @@ function initializeServiceBooking() {
         });
     });
 }
-
-// Initialize everything when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    initializeLanguage();
-    initializeServiceBooking();
-});
