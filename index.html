@@ -2,39 +2,16 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="Kapsalon Adem - Professional hairstyling in Rotterdam">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#0A0A0A">
     <title>Kapsalon Adem</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/dist/fullcalendar.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/dist/main.min.css">
 </head>
 <body>
-    <div class="language-selector">
-        <button class="current-lang">
-            <img src="https://flagcdn.com/w40/nl.png" alt="Nederlands" class="lang-flag">
-            <span>NL</span>
-            <i class="fas fa-chevron-down"></i>
-        </button>
-        <ul class="lang-dropdown">
-            <li data-lang="nl" class="active">
-                <img src="https://flagcdn.com/w40/nl.png" alt="Nederlands">
-                <span>Nederlands</span>
-            </li>
-            <li data-lang="en">
-                <img src="https://flagcdn.com/w40/gb.png" alt="English">
-                <span>English</span>
-            </li>
-            <li data-lang="tr">
-                <img src="https://flagcdn.com/w40/tr.png" alt="Türkçe">
-                <span>Türkçe</span>
-            </li>
-        </ul>
-    </div>
-
     <nav class="navbar">
         <div class="container">
             <div class="logo">
@@ -46,69 +23,61 @@
                 <span></span>
             </div>
             <ul class="nav-links">
-                <li><a href="#home" data-translate="nav.home">Home</a></li>
-                <li><a href="#services" data-translate="nav.services">Services</a></li>
-                <li><a href="#booking" class="booking-btn" data-translate="nav.booking">Book Now</a></li>
-                <li><a href="#contact" data-translate="nav.contact">Contact</a></li>
-                <li><a href="/admin/login" class="admin-btn">Admin</a></li>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#booking" class="booking-btn">Book Now</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="/admin" class="admin-btn">Admin</a></li>
             </ul>
         </div>
     </nav>
 
-    <section id="hero" class="hero">
-        <div class="barber-pole-container">
-            <div class="barber-pole"></div>
-        </div>
+    <section id="home" class="hero">
         <div class="hero-content">
-            <h1 class="fade-in">Welcome to Kapsalon Adem</h1>
-            <p class="hero-subtitle fade-in">Premium Barbershop Experience in Rotterdam</p>
-            <div class="hero-cta fade-in">
-                <a href="#booking" class="btn btn-primary btn-lg">
-                    <i class="fas fa-cut"></i> Book Your Style
-                </a>
-                <div class="hero-features">
-                    <div class="feature">
-                        <i class="fas fa-clock"></i>
-                        <span style="color: #FFD700;">Open 7 Days</span>
-                    </div>
-                    <div class="feature">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span style="color: #FFD700;">Rotterdam Central</span>
-                    </div>
-                    <div class="feature">
-                        <i class="fas fa-star"></i>
-                        <span style="color: #FFD700;">Premium Service</span>
-                    </div>
+            <h1>Welcome to Kapsalon Adem</h1>
+            <p class="hero-subtitle">Experience Premium Barbering in Rotterdam</p>
+            <a href="#booking" class="booking-btn">Book Your Appointment</a>
+            <div class="hero-features">
+                <div class="feature">
+                    <i class="fas fa-clock"></i>
+                    <span>Open 7 Days</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Rotterdam Central</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-star"></i>
+                    <span>Premium Service</span>
                 </div>
             </div>
         </div>
-        <div class="hero-overlay"></div>
     </section>
 
     <section id="services" class="services">
         <div class="container">
-            <div class="section-header" data-aos="fade-up">
-                <h2 data-translate="services.title">Our Services</h2>
-                <p data-translate="services.subtitle">Professional haircuts and grooming services</p>
+            <div class="section-header">
+                <h2>Our Services</h2>
+                <p>Professional haircuts and grooming services</p>
             </div>
-            <div class="service-grid grid-3">
-                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="service-grid">
+                <div class="service-card">
                     <i class="fas fa-cut"></i>
-                    <h3 data-translate="services.haircut.title">Haircut</h3>
-                    <p data-translate="services.haircut.price">€25</p>
-                    <p data-translate="services.haircut.description">Professional haircut with wash and styling</p>
+                    <h3>Haircut</h3>
+                    <p class="price">€25</p>
+                    <p>Professional haircut with styling</p>
                 </div>
-                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="service-card">
                     <i class="fas fa-razor"></i>
-                    <h3 data-translate="services.shave.title">Beard Trim</h3>
-                    <p data-translate="services.shave.price">€15</p>
-                    <p data-translate="services.shave.description">Professional beard trimming and shaping</p>
+                    <h3>Beard Trim</h3>
+                    <p class="price">€15</p>
+                    <p>Expert beard grooming</p>
                 </div>
-                <div class="service-card" data-aos="fade-up" data-aos-delay="300">
-                    <i class="fas fa-fire"></i>
-                    <h3 data-translate="services.combo.title">Haircut & Beard</h3>
-                    <p data-translate="services.combo.price">€35</p>
-                    <p data-translate="services.combo.description">Complete grooming package</p>
+                <div class="service-card">
+                    <i class="fas fa-spa"></i>
+                    <h3>Complete Package</h3>
+                    <p class="price">€35</p>
+                    <p>Haircut + Beard Trim</p>
                 </div>
             </div>
         </div>
@@ -116,58 +85,40 @@
 
     <section id="booking" class="booking">
         <div class="container">
-            <div class="section-header" data-aos="fade-up">
-                <h2 data-translate="booking.title">Book an Appointment</h2>
-                <p data-translate="booking.subtitle">Choose your preferred time and service</p>
+            <div class="section-header">
+                <h2>Book an Appointment</h2>
+                <p>Choose your preferred time and service</p>
             </div>
-            <div class="booking-container" data-aos="fade-up">
-                <div class="calendar-container">
-                    <div id="calendar"></div>
-                </div>
-                <form id="booking-form" class="booking-form">
+            <div class="booking-container">
+                <form id="booking-form">
                     <div class="form-group">
-                        <label for="service" data-translate="booking.form.service">Service</label>
+                        <label for="service">Select Service</label>
                         <select id="service" name="service" required>
-                            <option value="" data-translate="booking.form.selectService">Select a service</option>
-                            <option value="haircut" data-translate="booking.form.haircut">Haircut</option>
-                            <option value="beard" data-translate="booking.form.beard">Beard Trim</option>
-                            <option value="combo" data-translate="booking.form.combo">Haircut & Beard</option>
+                            <option value="haircut">Haircut - €25</option>
+                            <option value="beard">Beard Trim - €15</option>
+                            <option value="complete">Complete Package - €35</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="barber" data-translate="booking.form.barber">Barber</label>
-                        <select id="barber" name="barber" required>
-                            <option value="" data-translate="booking.form.selectBarber">Select a barber</option>
-                            <option value="adem">Adem</option>
-                            <option value="hasan">Hasan</option>
-                            <option value="abdullah">Abdullah</option>
-                        </select>
-                    </div>
-                    <div class="form-group hidden">
-                        <label for="date" data-translate="booking.form.date">Date</label>
-                        <input type="date" id="date" name="date" required>
+                    <div class="calendar-container">
+                        <div id="calendar"></div>
                     </div>
                     <div class="form-group">
-                        <label for="time" data-translate="booking.form.time">Time</label>
-                        <div class="time-slots-container">
-                            <div class="time-slots-grid" id="time-slots">
-                                <!-- Time slots will be dynamically populated -->
-                            </div>
-                        </div>
+                        <label>Available Time Slots</label>
+                        <div id="time-slots" class="time-slots"></div>
                     </div>
                     <div class="form-group">
-                        <label for="name" data-translate="booking.form.name">Name</label>
+                        <label for="name">Your Name</label>
                         <input type="text" id="name" name="name" required>
                     </div>
                     <div class="form-group">
-                        <label for="phone" data-translate="booking.form.phone">Phone</label>
-                        <input type="tel" id="phone" name="phone" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email" data-translate="booking.form.email">Email</label>
+                        <label for="email">Email</label>
                         <input type="email" id="email" name="email" required>
                     </div>
-                    <button type="submit" class="btn btn-primary" data-translate="booking.form.submit">Book Now</button>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <button type="submit" class="booking-btn">Confirm Booking</button>
                 </form>
             </div>
         </div>
@@ -175,30 +126,36 @@
 
     <section id="contact" class="contact">
         <div class="container">
-            <div class="section-header" data-aos="fade-up">
-                <h2 data-translate="contact.title">Contact Us</h2>
-                <p data-translate="contact.subtitle">Get in touch with us</p>
+            <div class="section-header">
+                <h2>Contact Us</h2>
+                <p>Get in touch with us</p>
             </div>
-            <div class="contact-grid grid-2">
-                <div class="contact-info" data-aos="fade-right">
-                    <div class="info-card">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="info-item">
                         <i class="fas fa-map-marker-alt"></i>
-                        <h3 data-translate="contact.address.title">Address</h3>
-                        <p data-translate="contact.address.text">123 Street Name, Rotterdam</p>
+                        <h3>Location</h3>
+                        <p>Coolsingel 123</p>
+                        <p>3012 AB Rotterdam</p>
                     </div>
-                    <div class="info-card">
+                    <div class="info-item">
                         <i class="fas fa-phone"></i>
-                        <h3 data-translate="contact.phone.title">Phone</h3>
-                        <p><a href="tel:+31612345678">+31 6 1234 5678</a></p>
+                        <h3>Phone</h3>
+                        <p>+31 10 123 4567</p>
                     </div>
-                    <div class="info-card">
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <h3>Email</h3>
+                        <p>info@kapsalonadem.nl</p>
+                    </div>
+                    <div class="info-item">
                         <i class="fas fa-clock"></i>
-                        <h3 data-translate="contact.hours.title">Opening Hours</h3>
-                        <p data-translate="contact.hours.weekdays">Mon - Fri: 9:00 - 18:00</p>
-                        <p data-translate="contact.hours.weekend">Sat: 9:00 - 17:00</p>
+                        <h3>Opening Hours</h3>
+                        <p>Mon-Sat: 9:00 - 18:00</p>
+                        <p>Sunday: 10:00 - 16:00</p>
                     </div>
                 </div>
-                <div class="map" data-aos="fade-left">
+                <div class="contact-map">
                     <iframe
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2436.5588274773244!2d4.8882799!3d52.3745913!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTLCsDIyJzI4LjUiTiA0wrA1MycxNy44IkU!5e0!3m2!1sen!2snl!4v1625764428726!5m2!1sen!2snl"
                         style="border:0;" allowfullscreen="" loading="lazy">
@@ -219,20 +176,14 @@
                     <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
                     <a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a>
                 </div>
-                <div class="footer-links">
-                    <a href="#" data-translate="footer.privacy">Privacy Policy</a>
-                    <a href="#" data-translate="footer.terms">Terms of Service</a>
-                </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Kapsalon Adem. <span data-translate="footer.rights">All rights reserved.</span></p>
+                <p>&copy; 2024 Kapsalon Adem. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/dist/fullcalendar.min.js"></script>
-    <script src="translations.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/dist/main.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
