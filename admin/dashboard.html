@@ -5,10 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kapsalon Adem - Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/admin/styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="admin-container">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
@@ -49,34 +54,33 @@
                     <div class="stat-card">
                         <i class="fas fa-calendar-check"></i>
                         <h3>Today's Bookings</h3>
-                        <p class="stat-number" id="todayBookings">0</p>
+                        <p id="todayBookings">0</p>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-users"></i>
                         <h3>Total Customers</h3>
-                        <p class="stat-number" id="totalCustomers">0</p>
+                        <p id="totalCustomers">0</p>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-euro-sign"></i>
                         <h3>Today's Revenue</h3>
-                        <p class="stat-number" id="todayRevenue">€0</p>
+                        <p id="todayRevenue">€0</p>
                     </div>
                 </div>
                 <div class="recent-bookings">
                     <h2>Recent Bookings</h2>
-                    <div class="table-responsive">
-                        <table id="recentBookingsTable">
+                    <div class="table-container">
+                        <table>
                             <thead>
                                 <tr>
-                                    <th>Date</th>
                                     <th>Time</th>
                                     <th>Customer</th>
                                     <th>Service</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody></tbody>
+                            <tbody id="recentBookingsTable">
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -84,17 +88,30 @@
 
             <!-- Services Tab -->
             <section id="services" class="tab-content">
-                <h1>Manage Services</h1>
+                <h1>Service Management</h1>
                 <button class="btn-primary" id="addServiceBtn">
-                    <i class="fas fa-plus"></i> Add New Service
+                    <i class="fas fa-plus"></i> Add Service
                 </button>
-                <div class="services-grid" id="servicesGrid"></div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Duration</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="servicesTable">
+                        </tbody>
+                    </table>
+                </div>
             </section>
 
             <!-- Bookings Tab -->
             <section id="bookings" class="tab-content">
-                <h1>Manage Bookings</h1>
-                <div class="booking-filters">
+                <h1>Booking Management</h1>
+                <div class="filters">
                     <input type="date" id="bookingDate" class="filter-input">
                     <select id="bookingStatus" class="filter-input">
                         <option value="all">All Status</option>
@@ -102,46 +119,30 @@
                         <option value="pending">Pending</option>
                         <option value="cancelled">Cancelled</option>
                     </select>
-                    <button class="btn-primary" id="filterBookings">Apply Filters</button>
                 </div>
-                <div class="table-responsive">
-                    <table id="bookingsTable">
+                <div class="table-container">
+                    <table>
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Time</th>
+                                <th>Date & Time</th>
                                 <th>Customer</th>
                                 <th>Service</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody id="bookingsTable">
+                        </tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- Work Hours Tab -->
+            <!-- Schedule Tab -->
             <section id="schedule" class="tab-content">
                 <h1>Work Hours</h1>
                 <div class="schedule-grid">
-                    <div class="day-schedule" data-day="monday">
-                        <h3>Monday</h3>
-                        <div class="time-inputs">
-                            <input type="time" class="start-time">
-                            <span>to</span>
-                            <input type="time" class="end-time">
-                        </div>
-                        <div class="break-time">
-                            <h4>Break Time</h4>
-                            <input type="time" class="break-start">
-                            <span>to</span>
-                            <input type="time" class="break-end">
-                        </div>
-                    </div>
-                    <!-- Repeat for other days -->
+                    <!-- Days will be populated by JavaScript -->
                 </div>
-                <button class="btn-primary" id="saveSchedule">Save Schedule</button>
             </section>
 
             <!-- Holidays Tab -->
@@ -150,21 +151,34 @@
                 <div class="holiday-form">
                     <input type="date" id="holidayDate" class="filter-input">
                     <input type="text" id="holidayReason" placeholder="Holiday Reason" class="filter-input">
-                    <button class="btn-primary" id="addHoliday">Add Holiday</button>
+                    <button class="btn-primary" id="addHolidayBtn">Add Holiday</button>
                 </div>
-                <div class="holidays-list" id="holidaysList"></div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Reason</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="holidaysTable">
+                        </tbody>
+                    </table>
+                </div>
             </section>
 
             <!-- Translations Tab -->
             <section id="translations" class="tab-content">
-                <h1>Manage Translations</h1>
+                <h1>Translation Management</h1>
                 <div class="language-tabs">
-                    <button class="lang-tab active" data-lang="en">English</button>
-                    <button class="lang-tab" data-lang="nl">Dutch</button>
+                    <button class="lang-tab active" data-lang="nl">Dutch</button>
+                    <button class="lang-tab" data-lang="en">English</button>
                     <button class="lang-tab" data-lang="tr">Turkish</button>
                 </div>
-                <div class="translations-grid" id="translationsGrid"></div>
-                <button class="btn-primary" id="saveTranslations">Save Translations</button>
+                <div id="translationFields">
+                    <!-- Translation fields will be populated by JavaScript -->
+                </div>
             </section>
 
             <!-- Settings Tab -->
@@ -220,7 +234,7 @@
     <!-- Modals -->
     <div class="modal" id="serviceModal">
         <div class="modal-content">
-            <h2>Add/Edit Service</h2>
+            <h2 id="serviceModalTitle">Add Service</h2>
             <form id="serviceForm">
                 <div class="form-group">
                     <label>Service Name</label>
@@ -228,25 +242,24 @@
                 </div>
                 <div class="form-group">
                     <label>Duration (minutes)</label>
-                    <input type="number" id="serviceDuration" required>
+                    <input type="number" id="serviceDuration" required min="15" step="15">
                 </div>
                 <div class="form-group">
                     <label>Price (€)</label>
-                    <input type="number" id="servicePrice" step="0.01" required>
+                    <input type="number" id="servicePrice" required min="0" step="0.50">
                 </div>
                 <div class="form-group">
                     <label>Description</label>
                     <textarea id="serviceDescription"></textarea>
                 </div>
                 <div class="modal-buttons">
-                    <button type="button" class="btn-secondary" id="cancelService">Cancel</button>
-                    <button type="submit" class="btn-primary">Save Service</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('serviceModal')">Cancel</button>
+                    <button type="submit" class="btn-primary">Save</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="/admin/dashboard.js"></script>
+    <script src="dashboard.js"></script>
 </body>
 </html>

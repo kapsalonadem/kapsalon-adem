@@ -1,16 +1,24 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize all components
-    initializeMobileMenu();
-    initializeTabs();
-    initializeServices();
-    initializeBookings();
-    initializeSchedule();
-    initializeHolidays();
-    initializeTranslations();
-    initializeSettings();
-    initializePasswordChange();
-    loadDashboardStats();
-});
+// Mobile Menu Toggle
+function initializeMobileMenu() {
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+
+    if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            mainContent.classList.toggle('sidebar-active');
+        });
+
+        // Close sidebar when clicking outside
+        mainContent.addEventListener('click', () => {
+            if (sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                mainContent.classList.remove('sidebar-active');
+            }
+        });
+    }
+}
 
 // Tab Navigation
 function initializeTabs() {
@@ -20,14 +28,20 @@ function initializeTabs() {
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
-            const targetTab = item.getAttribute('data-tab');
+            const tabId = item.getAttribute('data-tab');
 
             // Update active states
             navItems.forEach(nav => nav.classList.remove('active'));
             tabContents.forEach(tab => tab.classList.remove('active'));
 
             item.classList.add('active');
-            document.getElementById(targetTab).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+
+            // Close mobile menu after navigation
+            if (window.innerWidth <= 768) {
+                document.querySelector('.sidebar').classList.remove('active');
+                document.querySelector('.main-content').classList.remove('sidebar-active');
+            }
         });
     });
 }
@@ -35,25 +49,21 @@ function initializeTabs() {
 // Services Management
 function initializeServices() {
     const addServiceBtn = document.getElementById('addServiceBtn');
-    const serviceModal = document.getElementById('serviceModal');
     const serviceForm = document.getElementById('serviceForm');
-    const cancelServiceBtn = document.getElementById('cancelService');
+    const servicesTable = document.getElementById('servicesTable');
 
-    // Load existing services
+    // Load services
     loadServices();
 
-    // Show modal on add button click
+    // Add service button
     addServiceBtn.addEventListener('click', () => {
-        serviceModal.classList.add('active');
+        document.getElementById('serviceModalTitle').textContent = 'Add Service';
+        serviceForm.reset();
+        openModal('serviceModal');
     });
 
-    // Hide modal on cancel
-    cancelServiceBtn.addEventListener('click', () => {
-        serviceModal.classList.remove('active');
-    });
-
-    // Handle form submission
-    serviceForm.addEventListener('submit', (e) => {
+    // Service form submission
+    serviceForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = {
             name: document.getElementById('serviceName').value,
@@ -62,155 +72,106 @@ function initializeServices() {
             description: document.getElementById('serviceDescription').value
         };
 
-        saveService(formData);
-        serviceModal.classList.remove('active');
-        serviceForm.reset();
+        try {
+            await saveService(formData);
+            closeModal('serviceModal');
+            loadServices();
+        } catch (error) {
+            console.error('Error saving service:', error);
+        }
     });
-}
-
-async function loadServices() {
-    try {
-        const response = await fetch('/api/services');
-        const services = await response.json();
-        const servicesGrid = document.getElementById('servicesGrid');
-        
-        servicesGrid.innerHTML = services.map(service => `
-            <div class="service-card">
-                <h3>${service.name}</h3>
-                <p class="price">€${service.price}</p>
-                <p class="duration">${service.duration} minutes</p>
-                <p class="description">${service.description}</p>
-                <div class="card-actions">
-                    <button class="btn-secondary" onclick="editService(${service.id})">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn-secondary" onclick="deleteService(${service.id})">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </div>
-            </div>
-        `).join('');
-    } catch (error) {
-        console.error('Error loading services:', error);
-    }
 }
 
 // Bookings Management
 function initializeBookings() {
-    const filterBtn = document.getElementById('filterBookings');
     const bookingDate = document.getElementById('bookingDate');
     const bookingStatus = document.getElementById('bookingStatus');
+    const bookingsTable = document.getElementById('bookingsTable');
 
-    filterBtn.addEventListener('click', () => {
-        loadBookings(bookingDate.value, bookingStatus.value);
-    });
+    // Set default date to today
+    bookingDate.valueAsDate = new Date();
 
-    // Load initial bookings
+    // Load bookings
     loadBookings();
-}
 
-async function loadBookings(date = '', status = 'all') {
-    try {
-        const response = await fetch(`/api/bookings?date=${date}&status=${status}`);
-        const bookings = await response.json();
-        const bookingsTable = document.getElementById('bookingsTable').getElementsByTagName('tbody')[0];
-        
-        bookingsTable.innerHTML = bookings.map(booking => `
-            <tr>
-                <td>${moment(booking.date).format('DD/MM/YYYY')}</td>
-                <td>${booking.time}</td>
-                <td>${booking.customerName}</td>
-                <td>${booking.service}</td>
-                <td>
-                    <span class="status-badge ${booking.status.toLowerCase()}">
-                        ${booking.status}
-                    </span>
-                </td>
-                <td>
-                    <button class="btn-secondary" onclick="updateBookingStatus(${booking.id}, 'confirmed')">
-                        <i class="fas fa-check"></i>
-                    </button>
-                    <button class="btn-secondary" onclick="updateBookingStatus(${booking.id}, 'cancelled')">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
-    } catch (error) {
-        console.error('Error loading bookings:', error);
-    }
+    // Filter change handlers
+    bookingDate.addEventListener('change', loadBookings);
+    bookingStatus.addEventListener('change', loadBookings);
 }
 
 // Schedule Management
 function initializeSchedule() {
-    const saveScheduleBtn = document.getElementById('saveSchedule');
-    
-    // Load current schedule
-    loadSchedule();
+    const scheduleGrid = document.querySelector('.schedule-grid');
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-    saveScheduleBtn.addEventListener('click', () => {
-        const scheduleData = {};
-        document.querySelectorAll('.day-schedule').forEach(day => {
-            const dayName = day.getAttribute('data-day');
-            scheduleData[dayName] = {
-                start: day.querySelector('.start-time').value,
-                end: day.querySelector('.end-time').value,
-                breakStart: day.querySelector('.break-start').value,
-                breakEnd: day.querySelector('.break-end').value
-            };
-        });
-
-        saveSchedule(scheduleData);
+    days.forEach(day => {
+        const daySchedule = createDaySchedule(day);
+        scheduleGrid.appendChild(daySchedule);
     });
+
+    loadSchedule();
 }
 
-// Holidays Management
+// Holiday Management
 function initializeHolidays() {
-    const addHolidayBtn = document.getElementById('addHoliday');
+    const addHolidayBtn = document.getElementById('addHolidayBtn');
     const holidayDate = document.getElementById('holidayDate');
     const holidayReason = document.getElementById('holidayReason');
+    const holidaysTable = document.getElementById('holidaysTable');
 
+    // Load holidays
     loadHolidays();
 
-    addHolidayBtn.addEventListener('click', () => {
-        if (holidayDate.value && holidayReason.value) {
-            addHoliday({
+    // Add holiday button
+    addHolidayBtn.addEventListener('click', async () => {
+        if (!holidayDate.value || !holidayReason.value) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        try {
+            await saveHoliday({
                 date: holidayDate.value,
                 reason: holidayReason.value
             });
             holidayDate.value = '';
             holidayReason.value = '';
+            loadHolidays();
+        } catch (error) {
+            console.error('Error saving holiday:', error);
         }
     });
 }
 
-// Translations Management
+// Translation Management
 function initializeTranslations() {
     const langTabs = document.querySelectorAll('.lang-tab');
-    const saveTranslationsBtn = document.getElementById('saveTranslations');
+    const translationFields = document.getElementById('translationFields');
 
+    // Load translations
     loadTranslations();
 
+    // Language tab click handlers
     langTabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const lang = tab.getAttribute('data-lang');
             langTabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
-            loadTranslationFields(lang);
+            showTranslations(lang);
         });
     });
-
-    saveTranslationsBtn.addEventListener('click', saveTranslations);
 }
 
 // Settings Management
 function initializeSettings() {
+    const settingsForm = document.querySelector('.settings-form');
     const saveSettingsBtn = document.getElementById('saveSettings');
-    
-    // Load current settings
+
+    // Load settings
     loadSettings();
 
-    saveSettingsBtn.addEventListener('click', () => {
+    // Save settings
+    saveSettingsBtn.addEventListener('click', async () => {
         const settings = {
             businessName: document.getElementById('businessName').value,
             address: document.getElementById('businessAddress').value,
@@ -219,7 +180,13 @@ function initializeSettings() {
             timeSlotDuration: document.getElementById('timeSlotDuration').value
         };
 
-        saveSettings(settings);
+        try {
+            await saveSettings(settings);
+            alert('Settings saved successfully');
+        } catch (error) {
+            console.error('Error saving settings:', error);
+            alert('Error saving settings');
+        }
     });
 }
 
@@ -282,34 +249,21 @@ function initializePasswordChange() {
 // Dashboard Stats
 async function loadDashboardStats() {
     try {
-        const response = await fetch('/api/dashboard/stats');
+        const response = await fetch('/api/admin/dashboard/stats');
         const stats = await response.json();
-        
+
         document.getElementById('todayBookings').textContent = stats.todayBookings;
         document.getElementById('totalCustomers').textContent = stats.totalCustomers;
         document.getElementById('todayRevenue').textContent = `€${stats.todayRevenue}`;
-        
+
         // Load recent bookings
-        const recentBookings = await fetch('/api/dashboard/recent-bookings');
-        const bookings = await recentBookings.json();
-        
-        const recentBookingsTable = document.getElementById('recentBookingsTable').getElementsByTagName('tbody')[0];
-        recentBookingsTable.innerHTML = bookings.map(booking => `
+        const recentBookingsTable = document.getElementById('recentBookingsTable');
+        recentBookingsTable.innerHTML = stats.recentBookings.map(booking => `
             <tr>
-                <td>${moment(booking.date).format('DD/MM/YYYY')}</td>
-                <td>${booking.time}</td>
-                <td>${booking.customerName}</td>
+                <td>${formatTime(booking.time)}</td>
+                <td>${booking.customer}</td>
                 <td>${booking.service}</td>
-                <td>
-                    <span class="status-badge ${booking.status.toLowerCase()}">
-                        ${booking.status}
-                    </span>
-                </td>
-                <td>
-                    <button class="btn-secondary" onclick="viewBookingDetails(${booking.id})">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </td>
+                <td><span class="status-badge ${booking.status.toLowerCase()}">${booking.status}</span></td>
             </tr>
         `).join('');
     } catch (error) {
@@ -317,115 +271,70 @@ async function loadDashboardStats() {
     }
 }
 
-// Mobile Menu Toggle
-function initializeMobileMenu() {
-    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    const sidebar = document.querySelector('.sidebar');
-    const mainContent = document.querySelector('.main-content');
+// Helper Functions
+function formatTime(time) {
+    return new Date(time).toLocaleTimeString('nl-NL', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
 
-    if (mobileMenuToggle) {
-        mobileMenuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            mainContent.classList.toggle('sidebar-active');
-        });
+function openModal(modalId) {
+    document.getElementById(modalId).classList.add('active');
+}
 
-        // Close sidebar when clicking outside
-        mainContent.addEventListener('click', () => {
-            if (sidebar.classList.contains('active')) {
-                sidebar.classList.remove('active');
-                mainContent.classList.remove('sidebar-active');
-            }
-        });
-    }
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
 }
 
 // API Functions
 async function saveService(serviceData) {
+    const response = await fetch('/api/admin/services', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(serviceData)
+    });
+    return response.json();
+}
+
+async function loadServices() {
     try {
-        const response = await fetch('/api/services', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(serviceData)
-        });
+        const response = await fetch('/api/admin/services');
+        const services = await response.json();
+        const servicesTable = document.getElementById('servicesTable');
         
-        if (response.ok) {
-            loadServices();
-        }
+        servicesTable.innerHTML = services.map(service => `
+            <tr>
+                <td>${service.name}</td>
+                <td>${service.duration} min</td>
+                <td>€${service.price}</td>
+                <td>
+                    <button class="btn-secondary" onclick="editService(${service.id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-secondary" onclick="deleteService(${service.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
     } catch (error) {
-        console.error('Error saving service:', error);
+        console.error('Error loading services:', error);
     }
 }
 
-async function saveSchedule(scheduleData) {
-    try {
-        const response = await fetch('/api/schedule', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(scheduleData)
-        });
-        
-        if (response.ok) {
-            alert('Schedule saved successfully!');
-        }
-    } catch (error) {
-        console.error('Error saving schedule:', error);
-    }
-}
-
-async function addHoliday(holidayData) {
-    try {
-        const response = await fetch('/api/holidays', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(holidayData)
-        });
-        
-        if (response.ok) {
-            loadHolidays();
-        }
-    } catch (error) {
-        console.error('Error adding holiday:', error);
-    }
-}
-
-async function saveSettings(settingsData) {
-    try {
-        const response = await fetch('/api/settings', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(settingsData)
-        });
-        
-        if (response.ok) {
-            alert('Settings saved successfully!');
-        }
-    } catch (error) {
-        console.error('Error saving settings:', error);
-    }
-}
-
-// Utility Functions
-function showLoading() {
-    // Implement loading indicator
-}
-
-function hideLoading() {
-    // Hide loading indicator
-}
-
-function showError(message) {
-    // Implement error message display
-}
-
-// Initialize tooltips and other UI elements
-function initializeUI() {
-    // Add any additional UI initialization here
-}
+// Initialize all components
+document.addEventListener('DOMContentLoaded', function() {
+    initializeMobileMenu();
+    initializeTabs();
+    initializeServices();
+    initializeBookings();
+    initializeSchedule();
+    initializeHolidays();
+    initializeTranslations();
+    initializeSettings();
+    initializePasswordChange();
+    loadDashboardStats();
+});

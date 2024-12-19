@@ -28,6 +28,32 @@ body {
     min-height: 100vh;
 }
 
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1001;
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    padding: 0.5rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.mobile-menu-toggle:hover {
+    background: var(--primary-dark);
+    color: white;
+}
+
 /* Sidebar Styles */
 .sidebar {
     width: var(--sidebar-width);
@@ -152,6 +178,21 @@ body {
     color: white;
 }
 
+.btn-secondary {
+    background: #eee;
+    color: var(--secondary-color);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.btn-secondary:hover {
+    background: #ddd;
+}
+
 /* Tables */
 .table-container {
     overflow-x: auto;
@@ -185,30 +226,25 @@ th {
     display: block;
 }
 
-/* Mobile Menu Toggle */
-.mobile-menu-toggle {
-    display: none;
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    z-index: 1001;
-    background: var(--primary-color);
-    color: var(--secondary-color);
+/* Language Tabs */
+.language-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.lang-tab {
+    padding: 0.75rem 1.5rem;
     border: none;
-    padding: 0.5rem;
+    background: #eee;
     border-radius: var(--border-radius);
     cursor: pointer;
-    font-size: 1.5rem;
-    width: 40px;
-    height: 40px;
-    align-items: center;
-    justify-content: center;
     transition: var(--transition);
 }
 
-.mobile-menu-toggle:hover {
-    background: var(--primary-dark);
-    color: white;
+.lang-tab.active {
+    background: var(--primary-color);
+    color: var(--secondary-color);
 }
 
 /* Mobile Styles */
@@ -255,6 +291,16 @@ th {
     .form-group textarea {
         font-size: 16px; /* Prevents zoom on mobile */
     }
+
+    .language-tabs {
+        flex-wrap: wrap;
+    }
+
+    .lang-tab {
+        flex: 1;
+        text-align: center;
+        padding: 0.5rem;
+    }
 }
 
 /* Modal Styles */
@@ -285,6 +331,13 @@ th {
     overflow-y: auto;
 }
 
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
 /* Error Message */
 .error-message {
     color: #dc3545;
@@ -295,4 +348,19 @@ th {
 
 .error-message.show {
     display: block;
+}
+
+/* Loading Animation */
+.loading {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255, 215, 0, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
