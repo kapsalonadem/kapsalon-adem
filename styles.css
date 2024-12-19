@@ -322,7 +322,7 @@ img {
     position: relative;
     height: 100vh;
     min-height: 600px;
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
                 url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=2070&q=80');
     background-size: cover;
     background-position: center;
@@ -331,7 +331,7 @@ img {
     align-items: center;
     justify-content: center;
     text-align: center;
-    overflow: hidden;
+    padding: 0 20px;
 }
 
 .hero::before {
@@ -382,115 +382,26 @@ img {
 }
 
 /* Enhanced Barber Poles */
-.barber-pole-container {
-    position: fixed;
-    height: 100vh;
-    width: 60px;
-    z-index: 3;
-}
-
-.barber-pole-left {
-    left: 0;
-}
-
-.barber-pole-right {
-    right: 0;
-}
-
 .barber-pole {
-    width: 60px;
-    height: 100%;
-    background: linear-gradient(
-        45deg,
-        #ff0000 0%,
-        #ff0000 25%,
-        #ffffff 25%,
-        #ffffff 50%,
-        #0000ff 50%,
-        #0000ff 75%,
-        #ff0000 75%,
-        #ff0000 100%
-    );
-    background-size: 60px 60px;
-    animation: barber-pole 12s linear infinite;
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-    position: relative;
-    overflow: hidden;
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 80vh;
+    z-index: 100;
 }
 
-.barber-pole::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-        to right,
-        rgba(255, 255, 255, 0.2) 0%,
-        rgba(255, 255, 255, 0.4) 50%,
-        rgba(255, 255, 255, 0.2) 100%
-    );
-    animation: shine 3s linear infinite;
+.barber-pole.left {
+    left: 20px;
 }
 
-@keyframes goldShine {
-    from {
-        filter: brightness(100%) drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
-    }
-    to {
-        filter: brightness(120%) drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
-    }
+.barber-pole.right {
+    right: 20px;
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes shine {
-    0% {
-        transform: translateX(-100%);
-    }
-    100% {
-        transform: translateX(100%);
-    }
-}
-
-/* Mobile Optimizations for Hero */
 @media (max-width: 768px) {
-    .hero {
-        background-attachment: scroll;
-    }
-
-    .hero h1 {
-        font-size: 2.5rem;
-        padding: 0 1rem;
-    }
-
-    .hero-subtitle {
-        font-size: 1.2rem;
-        padding: 0 1rem;
-    }
-
-    .hero-content {
-        margin: 0 1rem;
-        padding: 1.5rem;
-    }
-
-    .barber-pole-container {
-        width: 40px;
-    }
-
     .barber-pole {
-        width: 40px;
-        background-size: 40px 40px;
+        display: none; /* Hide on mobile */
     }
 }
 
