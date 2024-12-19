@@ -5,13 +5,177 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Kapsalon Adem</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #FFD700;
+            --primary-dark: #B8860B;
+            --secondary-color: #333;
+            --text-color: #333;
+            --bg-color: #f5f5f5;
+            --error-color: #dc3545;
+            --success-color: #28a745;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header img {
+            width: 120px;
+            margin-bottom: 1rem;
+        }
+
+        .login-header h1 {
+            color: var(--secondary-color);
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e1e1;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            display: none;
+            color: var(--error-color);
+            background-color: rgba(220, 53, 69, 0.1);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            margin-left: 8px;
+        }
+
+        .loading.show {
+            display: inline-block;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <img src="/assets/images/logo.png" alt="Kapsalon Adem Logo">
+            <h1>Admin Login</h1>
+        </div>
+        <div id="errorMessage" class="error-message">
+            Invalid username or password
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="submit-btn">
+                Login
+                <i id="loadingIcon" class="fas fa-spinner fa-spin loading"></i>
+            </button>
+        </form>
+    </div>
+
     <script type="module">
         import config from '../config.js';
         
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const loadingIcon = document.getElementById('loadingIcon');
+        const submitButton = loginForm.querySelector('button[type="submit"]');
+
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const errorMessage = document.getElementById('errorMessage');
+            
+            // Reset state
             errorMessage.classList.remove('show');
+            loadingIcon.classList.add('show');
+            submitButton.disabled = true;
 
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
@@ -30,161 +194,17 @@
                     window.location.href = '/admin';
                 } else {
                     errorMessage.classList.add('show');
+                    submitButton.disabled = false;
+                    loadingIcon.classList.remove('show');
                 }
             } catch (error) {
                 console.error('Login error:', error);
+                errorMessage.textContent = 'Connection error. Please try again.';
                 errorMessage.classList.add('show');
+                submitButton.disabled = false;
+                loadingIcon.classList.remove('show');
             }
         });
     </script>
-    <style>
-        :root {
-            --primary-color: #FFD700;
-            --primary-dark: #B8860B;
-            --secondary-color: #333;
-            --text-color: #333;
-            --bg-color: #f5f5f5;
-            --border-radius: 8px;
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: var(--bg-color);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .login-container {
-            background: white;
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .login-header img {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-            margin-bottom: 1rem;
-        }
-
-        .login-header h1 {
-            color: var(--secondary-color);
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-color);
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 0.8rem;
-            background: var(--primary-color);
-            color: var(--secondary-color);
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn-login:hover {
-            background: var(--primary-dark);
-            color: white;
-        }
-
-        .error-message {
-            color: #dc3545;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 1.5rem;
-            }
-
-            .login-header img {
-                width: 100px;
-                height: 100px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="login-container">
-        <div class="login-header">
-            <img src="/assets/images/logo.png" alt="Kapsalon Adem Logo">
-            <h1>Admin Login</h1>
-            <p>Please login to access the admin dashboard</p>
-        </div>
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <div class="error-message" id="errorMessage">
-                Invalid username or password
-            </div>
-            <button type="submit" class="btn-login">
-                <i class="fas fa-sign-in-alt"></i> Login
-            </button>
-        </form>
-    </div>
 </body>
 </html>

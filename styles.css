@@ -302,6 +302,30 @@ img {
     background-color: var(--secondary-color);
 }
 
+.admin-btn {
+    background-color: #333;
+    color: #FFD700 !important;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.admin-btn i {
+    font-size: 1.2em;
+}
+
+.admin-btn:hover {
+    background-color: #444;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .admin-btn {
+        margin-top: 10px;
+    }
+}
+
 .hamburger {
     display: none;
     flex-direction: column;
