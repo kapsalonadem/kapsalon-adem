@@ -117,11 +117,18 @@ body {
 /* Spinning Barber Pole */
 .spinning-pole-container {
     position: absolute;
-    right: 50px;
     top: 50%;
     transform: translateY(-50%);
     height: 80vh;
     width: 60px;
+}
+
+.spinning-pole-container.left {
+    left: 50px;
+}
+
+.spinning-pole-container.right {
+    right: 50px;
 }
 
 .barber-pole {
@@ -137,10 +144,19 @@ body {
         var(--gradient-end) 30%,
         var(--gradient-start) 30%
     );
-    background-size: 30px 30px;
-    animation: scrollStripes 8s linear infinite;
+    background-size: 60px 60px;
+    animation: scrollStripes 12s linear infinite;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes scrollStripes {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 0 -120px;
+    }
 }
 
 /* Services Section */
@@ -247,15 +263,6 @@ body {
     to {
         opacity: 1;
         transform: translateY(0);
-    }
-}
-
-@keyframes scrollStripes {
-    0% {
-        background-position: 0 0;
-    }
-    100% {
-        background-position: 0 -30px;
     }
 }
 
