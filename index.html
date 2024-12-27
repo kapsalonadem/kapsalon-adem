@@ -1,135 +1,86 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kapsalon Adem - Premium Barbershop Rotterdam</title>
-    <meta name="description" content="Kapsalon Adem - Premium barbershop in Rotterdam offering professional haircuts, shaves, and grooming services">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="styles.css">
+    <title>Kapsalon Adem - Modern Barbershop</title>
+    <link rel="stylesheet" href="/public/modern-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="/" class="logo">Kapsalon Adem</a>
-            <div class="nav-links">
-                <a href="#services">Diensten</a>
-                <a href="#about">Over Ons</a>
-                <a href="#contact">Contact</a>
-                <a href="/booking.html" class="btn-primary">Afspraak Maken</a>
-            </div>
-            <button class="mobile-menu-btn">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-    </nav>
-
-    <header class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Premium Barbershop in Rotterdam</h1>
-                <p>Ervaar de kunst van traditioneel barbieren met moderne stijl</p>
-                <a href="/booking.html" class="btn-primary">Maak een Afspraak</a>
-            </div>
+    <header class="hero-section">
+        <div class="hero-content">
+            <h1>Kapsalon Adem</h1>
+            <p>Experience the art of grooming</p>
+            <button class="cta-button" onclick="scrollToBooking()">Book Now</button>
         </div>
     </header>
 
-    <section id="services" class="services">
-        <div class="container">
-            <h2>Onze Diensten</h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <i class="fas fa-cut"></i>
-                    <h3>Heren Knippen</h3>
-                    <p>Professionele knipbeurt inclusief styling</p>
-                    <span class="price">€25</span>
-                </div>
-                <div class="service-card">
-                    <i class="fas fa-razor"></i>
-                    <h3>Baard Trimmen</h3>
-                    <p>Perfecte baard styling en verzorging</p>
-                    <span class="price">€15</span>
-                </div>
-                <div class="service-card">
-                    <i class="fas fa-fire"></i>
-                    <h3>Hot Towel Shave</h3>
-                    <p>Traditionele scheerbeurt met warme handdoek</p>
-                    <span class="price">€20</span>
-                </div>
+    <section class="services-section">
+        <h2>Our Services</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <i class="fas fa-cut service-icon"></i>
+                <h3>Haircut</h3>
+                <p>Professional haircut tailored to your style</p>
+                <span class="price">€25</span>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-razor service-icon"></i>
+                <h3>Beard Trim</h3>
+                <p>Expert beard grooming and styling</p>
+                <span class="price">€15</span>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-fire service-icon"></i>
+                <h3>Hot Towel Shave</h3>
+                <p>Traditional hot towel shaving experience</p>
+                <span class="price">€20</span>
             </div>
         </div>
     </section>
 
-    <section id="about" class="about">
-        <div class="container">
-            <div class="about-content">
-                <h2>Over Kapsalon Adem</h2>
-                <p>Met meer dan 10 jaar ervaring in het vak, bieden wij de beste kappersservice in Rotterdam. Onze focus ligt op kwaliteit, stijl en klanttevredenheid.</p>
-                <div class="features">
-                    <div class="feature">
-                        <i class="fas fa-clock"></i>
-                        <h4>Flexibele Tijden</h4>
-                    </div>
-                    <div class="feature">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <h4>Centraal Gelegen</h4>
-                    </div>
-                    <div class="feature">
-                        <i class="fas fa-star"></i>
-                        <h4>Topkwaliteit</h4>
+    <section id="booking" class="booking-section">
+        <div class="booking-container">
+            <h2>Book Your Appointment</h2>
+            <form class="booking-form" id="bookingForm">
+                <div class="form-group">
+                    <label for="service">Select Service</label>
+                    <select id="service" required>
+                        <option value="">Choose a service</option>
+                        <option value="haircut">Haircut - €25</option>
+                        <option value="beard">Beard Trim - €15</option>
+                        <option value="shave">Hot Towel Shave - €20</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date">Select Date</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label>Select Time</label>
+                    <div class="time-slots" id="timeSlots">
+                        <!-- Time slots will be populated by JavaScript -->
                     </div>
                 </div>
-            </div>
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Your Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Your Phone</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                <button type="submit" class="cta-button">Confirm Booking</button>
+            </form>
         </div>
     </section>
 
-    <section id="contact" class="contact">
-        <div class="container">
-            <div class="contact-content">
-                <div class="contact-info">
-                    <h2>Contact & Locatie</h2>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <p>Dordtselaan 44a, 3073GC Rotterdam</p>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-phone"></i>
-                        <p>+31 6 24 27 00 72</p>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-clock"></i>
-                        <p>Ma-Za: 09:00 - 18:00<br>Zo: Gesloten</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-info">
-                    <h3>Kapsalon Adem</h3>
-                    <p>Premium barbershop in Rotterdam</p>
-                </div>
-                <div class="footer-links">
-                    <a href="#services">Diensten</a>
-                    <a href="#about">Over Ons</a>
-                    <a href="#contact">Contact</a>
-                    <a href="/booking.html">Afspraak Maken</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Kapsalon Adem. Alle rechten voorbehouden.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
+    <script src="/script.js"></script>
 </body>
 </html>

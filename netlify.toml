@@ -1,6 +1,6 @@
 [build]
   publish = "public"
-  command = ""
+  command = "npm run build"
 
 # API proxy
 [[redirects]]
@@ -9,17 +9,38 @@
   status = 200
   force = true
   headers = {
-    Access-Control-Allow-Origin = "*",
+    Access-Control-Allow-Origin = "https://ademkapsalon.netlify.app",
     Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS",
     Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept, Authorization",
     Access-Control-Allow-Credentials = "true"
   }
+
+# Error handling for API
+[[redirects]]
+  from = "/api/*"
+  to = "/error.html"
+  status = 404
+  force = false
+  conditions = {Response.status = ["404", "500"]}
 
 # Cache control for CSS files
 [[headers]]
   for = "/*.css"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+    X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
 
 # Admin routes
 [[redirects]]
