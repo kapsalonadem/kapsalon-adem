@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "prebuild": "npm install rimraf mkdirp copyfiles -D",
-    "build": "rimraf public && mkdirp public/assets/images && copyfiles -u 1 \"assets/images/*\" public/assets/images/ && copyfiles \"*.html\" public/ && copyfiles \"*.css\" public/ && copyfiles \"*.js\" public/ && copyfiles -u 1 \"admin/**/*\" public/admin/",
+    "build": "echo 'No build step needed - static files are in public directory'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
