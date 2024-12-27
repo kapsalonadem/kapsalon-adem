@@ -6,12 +6,14 @@
   to = "https://kapsalon-adem.onrender.com/api/:splat"
   status = 200
   force = true
-  headers = {
-    Access-Control-Allow-Origin = "https://ademkapsalon.netlify.app",
-    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS",
-    Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://ademkapsalon.netlify.app"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept, Authorization"
     Access-Control-Allow-Credentials = "true"
-  }
 
 [[redirects]]
   from = "/*"
