@@ -12,6 +12,28 @@ const path = require('path');
 const fs = require('fs').promises;
 const cookieParser = require('cookie-parser');
 
+// Define MongoDB schemas
+const appointmentSchema = new mongoose.Schema({
+    service: String,
+    date: Date,
+    time: String,
+    name: String,
+    email: String,
+    phone: String,
+    barber: String,
+    status: {
+        type: String,
+        enum: ['pending', 'confirmed', 'cancelled'],
+        default: 'pending'
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+});
+
+const Appointment = mongoose.model('Appointment', appointmentSchema);
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -93,28 +115,6 @@ connectDB();
 
 // Initialize SendGrid
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-// Appointment Schema
-const appointmentSchema = new mongoose.Schema({
-    service: String,
-    date: Date,
-    time: String,
-    name: String,
-    email: String,
-    phone: String,
-    barber: String,
-    status: {
-        type: String,
-        enum: ['pending', 'confirmed', 'cancelled'],
-        default: 'pending'
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-});
-
-const Appointment = mongoose.model('Appointment', appointmentSchema);
 
 // Backup Schema
 const backupSchema = new mongoose.Schema({
@@ -327,6 +327,79 @@ app.get('/api/appointments/:date', async (req, res) => {
         res.json(appointments);
     } catch (error) {
         res.status(500).json({ error: 'Error fetching appointments' });
+    }
+});
+
+// Get available time slots for a date
+app.get('/api/appointments/availability', async (req, res) => {
+    try {
+        console.log('MongoDB URI:', process.env.MONGODB_URI);
+        console.log('Connected to MongoDB:', mongoose.connection.readyState);
+
+        if (!req.query.date) {
+            return res.status(400).json({ error: 'Date parameter is required' });
+        }
+
+        const requestedDate = new Date(req.query.date);
+        if (isNaN(requestedDate.getTime())) {
+            return res.status(400).json({ error: 'Invalid date format' });
+        }
+
+        const startOfDay = new Date(requestedDate);
+        startOfDay.setHours(0, 0, 0, 0);
+        
+        const endOfDay = new Date(requestedDate);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        console.log('Checking availability for:', {
+            requestedDate: requestedDate.toISOString(),
+            startOfDay: startOfDay.toISOString(),
+            endOfDay: endOfDay.toISOString()
+        });
+
+        // Get all appointments for the date
+        const appointments = await Appointment.find({
+            date: {
+                $gte: startOfDay,
+                $lte: endOfDay
+            }
+        }).lean().exec();
+
+        console.log('Found appointments:', JSON.stringify(appointments, null, 2));
+
+        // Define business hours
+        const businessHours = {
+            start: 9, // 9 AM
+            end: 18   // 6 PM
+        };
+
+        // Generate all possible time slots
+        const timeSlots = [];
+        for (let hour = businessHours.start; hour < businessHours.end; hour++) {
+            timeSlots.push(`${String(hour).padStart(2, '0')}:00`);
+            timeSlots.push(`${String(hour).padStart(2, '0')}:30`);
+        }
+
+        // Filter out booked slots
+        const bookedTimes = appointments.map(apt => apt.time);
+        const availableSlots = timeSlots.filter(time => !bookedTimes.includes(time));
+
+        console.log('Available slots:', availableSlots);
+
+        res.json({ 
+            date: requestedDate.toISOString().split('T')[0],
+            availableSlots,
+            businessHours,
+            totalSlots: timeSlots.length,
+            bookedSlots: bookedTimes
+        });
+    } catch (error) {
+        console.error('Error fetching appointments:', error);
+        res.status(500).json({ 
+            error: 'Error fetching appointments',
+            details: error.message,
+            stack: error.stack
+        });
     }
 });
 

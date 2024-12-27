@@ -1,14 +1,17 @@
-/* Base styles */
+/* Modern Barber Shop Theme */
 :root {
-    --primary-color: #1a1a1a;
-    --secondary-color: #d4af37;
+    --primary-color: #1e1e1e;
+    --secondary-color: #c59d5f;
+    --accent-color: #f4f4f4;
     --text-color: #333;
     --text-light: #fff;
     --background-color: #fff;
-    --font-family: 'Poppins', sans-serif;
-    --border-radius: 5px;
-    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.15);
+    --font-primary: 'Playfair Display', serif;
+    --font-secondary: 'Poppins', sans-serif;
+    --border-radius: 8px;
+    --transition: all 0.3s ease;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 * {
@@ -18,30 +21,34 @@
 }
 
 body {
-    font-family: var(--font-family);
+    font-family: var(--font-secondary);
     line-height: 1.6;
     color: var(--text-color);
+    background-color: var(--background-color);
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-primary);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--primary-color);
 }
 
 /* Navbar */
 .navbar {
-    background: var(--primary-color);
-    padding: 1rem 0;
+    background: transparent;
+    padding: 1.5rem 0;
     position: fixed;
     width: 100%;
     top: 0;
     z-index: 1000;
-    transition: background-color 0.3s ease;
+    transition: var(--transition);
 }
 
 .navbar.scrolled {
-    background: rgba(26, 26, 26, 0.95);
+    background: rgba(30, 30, 30, 0.95);
+    padding: 1rem 0;
     box-shadow: var(--shadow);
 }
 
@@ -49,26 +56,24 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 2rem;
 }
 
 .logo {
     color: var(--text-light);
-    font-size: 1.5rem;
+    font-family: var(--font-primary);
+    font-size: 2rem;
     font-weight: 700;
     text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.logo:hover {
-    color: var(--secondary-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .nav-links {
     display: flex;
-    gap: 2rem;
+    gap: 3rem;
     align-items: center;
 }
 
@@ -76,370 +81,257 @@ body {
     color: var(--text-light);
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.3s ease;
-    padding: 0.5rem 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    position: relative;
 }
 
-.nav-links a:hover {
-    color: var(--secondary-color);
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background-color: var(--secondary-color);
+    transition: var(--transition);
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                url('assets/images/barbershop-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-light);
+    padding-top: 80px;
+}
+
+.hero-content {
+    max-width: 800px;
+    padding: 0 2rem;
+}
+
+.hero h1 {
+    font-size: 4.5rem;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    line-height: 1.2;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2.5rem;
+    opacity: 0.9;
 }
 
 .btn-primary {
     background: var(--secondary-color);
     color: var(--text-light);
-    padding: 0.8rem 1.5rem;
+    padding: 1rem 2.5rem;
     border-radius: var(--border-radius);
     text-decoration: none;
-    transition: all 0.3s ease;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: var(--transition);
     border: 2px solid var(--secondary-color);
 }
 
 .btn-primary:hover {
     background: transparent;
     color: var(--secondary-color);
-}
-
-/* Mobile Menu */
-.mobile-menu-btn {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-}
-
-.mobile-menu-btn span {
-    display: block;
-    width: 25px;
-    height: 2px;
-    background: var(--text-light);
-    margin: 5px 0;
-    transition: 0.3s;
-}
-
-.mobile-menu-btn.active span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-}
-
-.mobile-menu-btn.active span:nth-child(2) {
-    opacity: 0;
-}
-
-.mobile-menu-btn.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -6px);
-}
-
-/* Hero Section */
-.hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('assets/images/barbershop-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    color: var(--text-light);
-    text-align: center;
-    padding-top: 70px;
-}
-
-.hero-content {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.hero h1 {
-    font-size: 3.5rem;
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.hero p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    opacity: 0.9;
+    transform: translateY(-3px);
 }
 
 /* Services Section */
 .services {
-    padding: 5rem 0;
+    padding: 8rem 0;
     background: var(--background-color);
 }
 
-.services h2 {
+.section-title {
     text-align: center;
-    margin-bottom: 3rem;
-    font-size: 2.5rem;
+    margin-bottom: 5rem;
+}
+
+.section-title h2 {
+    font-size: 3rem;
     color: var(--primary-color);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: var(--secondary-color);
+    margin: 1rem auto;
 }
 
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    padding: 0 20px;
-    max-width: 1200px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    max-width: 1400px;
     margin: 0 auto;
+    padding: 0 2rem;
 }
 
 .service-card {
-    background: #fff;
-    padding: 2rem;
+    background: var(--background-color);
+    padding: 3rem 2rem;
     border-radius: var(--border-radius);
     text-align: center;
     box-shadow: var(--shadow);
-    transition: transform 0.3s ease;
+    transition: var(--transition);
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-lg);
 }
 
 .service-card i {
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: var(--secondary-color);
     margin-bottom: 1.5rem;
 }
 
 .service-card h3 {
+    font-size: 1.5rem;
     margin-bottom: 1rem;
     color: var(--primary-color);
 }
 
 .service-card p {
     color: #666;
-    margin-bottom: 1rem;
+    font-size: 1rem;
+    line-height: 1.6;
 }
 
-.service-card .price {
-    display: block;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--secondary-color);
-    margin-top: 1rem;
-}
-
-/* About Section */
-.about {
-    padding: 5rem 0;
-    background: #f9f9f9;
-}
-
-.about-content {
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: center;
-    padding: 0 20px;
-}
-
-.about h2 {
-    margin-bottom: 2rem;
-    font-size: 2.5rem;
-    color: var(--primary-color);
-}
-
-.about p {
-    color: #666;
-    margin-bottom: 3rem;
-}
-
-/* Contact Section */
-.contact {
-    padding: 5rem 0;
-    background: var(--background-color);
-}
-
-.contact-content {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.contact h2 {
-    text-align: center;
-    margin-bottom: 3rem;
-    font-size: 2.5rem;
-    color: var(--primary-color);
-}
-
-.info-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding: 1.5rem;
-    background: #fff;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-}
-
-.info-item i {
-    font-size: 1.5rem;
-    color: var(--secondary-color);
-    margin-right: 1.5rem;
-}
-
-.info-item p {
-    color: #666;
-    margin: 0;
-}
-
-/* Booking Form Styles */
+/* Booking Form */
 #booking-form {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 2rem;
+    max-width: 800px;
+    margin: 4rem auto;
+    padding: 3rem;
     background: var(--background-color);
-    border-radius: 10px;
-    box-shadow: var(--shadow-md);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 2rem;
 }
 
 #booking-form label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
     color: var(--primary-color);
     font-weight: 500;
+    font-size: 1.1rem;
 }
 
 #booking-form input,
 #booking-form select {
     width: 100%;
-    padding: 0.8rem;
-    margin-bottom: 1.5rem;
-    border: 1px solid #e0e0e0;
+    padding: 1rem;
+    border: 2px solid #eee;
     border-radius: var(--border-radius);
-    font-family: var(--font-family);
+    font-family: var(--font-secondary);
     font-size: 1rem;
-    transition: border-color 0.3s ease;
+    transition: var(--transition);
+    background-color: #f9f9f9;
 }
 
 #booking-form input:focus,
 #booking-form select:focus {
     outline: none;
     border-color: var(--secondary-color);
-    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1);
+    box-shadow: 0 0 0 3px rgba(197, 157, 95, 0.1);
 }
 
-#booking-form button[type="submit"] {
+#booking-form button {
     width: 100%;
-    padding: 1rem;
+    padding: 1.2rem;
     background: var(--secondary-color);
     color: var(--text-light);
     border: none;
     border-radius: var(--border-radius);
     font-size: 1.1rem;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--transition);
 }
 
-#booking-form button[type="submit"]:hover {
-    background: #c19b2f;
-    transform: translateY(-2px);
-}
-
-/* Booking Page Header */
-.booking-header {
-    background: var(--primary-color);
-    color: var(--text-light);
-    padding: 2rem 0;
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.booking-header h1 {
-    font-size: 2.5rem;
-    margin: 0;
+#booking-form button:hover {
+    background: #b38d4a;
+    transform: translateY(-3px);
 }
 
 /* Footer */
 .footer {
     background: var(--primary-color);
     color: var(--text-light);
-    padding: 3rem 0 1rem;
+    padding: 4rem 0;
+    text-align: center;
 }
 
 .footer-content {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-    padding: 0 20px;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
+    padding: 0 2rem;
 }
 
-.footer-info h3 {
-    margin-bottom: 1rem;
-    color: var(--secondary-color);
-}
-
-.footer-info p {
-    opacity: 0.8;
-}
-
-.footer-links {
-    display: flex;
-    gap: 2rem;
-}
-
-.footer-links a {
-    color: var(--text-light);
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.footer-links a:hover {
-    color: var(--secondary-color);
-}
-
-.footer-bottom {
-    text-align: center;
-    padding-top: 2rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.footer-bottom p {
+.footer p {
     opacity: 0.8;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .mobile-menu-btn {
-        display: block;
+    .navbar {
+        padding: 1rem;
     }
-
+    
+    .hero h1 {
+        font-size: 3rem;
+    }
+    
     .nav-links {
         display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: var(--primary-color);
-        padding: 1rem;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
     }
-
-    .nav-links.active {
-        display: flex;
-    }
-
-    .hero h1 {
-        font-size: 2.5rem;
-    }
-
+    
     .services-grid {
         grid-template-columns: 1fr;
     }
-
+    
     #booking-form {
-        margin: 1rem;
-        padding: 1.5rem;
+        margin: 2rem;
+        padding: 2rem;
     }
     
-    .booking-header h1 {
-        font-size: 2rem;
+    .section-title h2 {
+        font-size: 2.5rem;
     }
 }
 
@@ -455,6 +347,6 @@ body {
     }
 }
 
-.hero-content, .service-card {
-    animation: fadeIn 0.8s ease-out forwards;
+.fade-in {
+    animation: fadeIn 1s ease-out;
 }

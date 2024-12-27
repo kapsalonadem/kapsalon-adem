@@ -5,32 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking - Kapsalon Adem</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <h1>Book Your Appointment</h1>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Kapsalon Adem</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#services">Services</a>
+                <a href="index.html#contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="booking-header">
+        <div class="container">
+            <h1>Book Your Appointment</h1>
+        </div>
     </header>
-    <main>
+
+    <main class="container">
         <form id="booking-form">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required placeholder="Your name">
+            </div>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+            </div>
 
-            <label for="service">Service:</label>
-            <select id="service" name="service" required>
-                <option value="haircut">Haircut</option>
-                <option value="shave">Shave</option>
-                <option value="grooming">Grooming</option>
-            </select>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required placeholder="+31 6 12345678">
+            </div>
 
-            <label for="date">Preferred Date:</label>
-            <input type="date" id="date" name="date" required>
+            <div class="form-group">
+                <label for="service">Service</label>
+                <select id="service" name="service" required>
+                    <option value="">Select a service</option>
+                    <option value="haircut">Haircut (€25)</option>
+                    <option value="beard">Beard Trim (€15)</option>
+                    <option value="combo">Haircut & Beard Combo (€35)</option>
+                    <option value="kids">Kids Haircut (€20)</option>
+                </select>
+            </div>
 
-            <button type="submit">Book Now</button>
+            <div class="form-group">
+                <label for="date">Preferred Date</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="time">Preferred Time</label>
+                <select id="time" name="time" required>
+                    <option value="">Select a time</option>
+                    <option value="09:00">09:00</option>
+                    <option value="10:00">10:00</option>
+                    <option value="11:00">11:00</option>
+                    <option value="12:00">12:00</option>
+                    <option value="13:00">13:00</option>
+                    <option value="14:00">14:00</option>
+                    <option value="15:00">15:00</option>
+                    <option value="16:00">16:00</option>
+                    <option value="17:00">17:00</option>
+                </select>
+            </div>
+
+            <button type="submit">Book Appointment</button>
         </form>
     </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Kapsalon Adem. All rights reserved.</p>
+        </div>
+    </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
