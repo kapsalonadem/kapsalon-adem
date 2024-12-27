@@ -179,3 +179,127 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(card);
     });
 });
+
+// Smooth scroll for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+
+// Navbar background change on scroll
+window.addEventListener('scroll', () => {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 50) {
+        navbar.style.background = 'rgba(0, 0, 0, 0.95)';
+    } else {
+        navbar.style.background = 'rgba(0, 0, 0, 0.8)';
+    }
+});
+
+// Language switcher
+function changeLanguage(lang) {
+    const buttons = document.querySelectorAll('.lang-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Add translation logic here
+}
+
+// Mobile menu toggle
+const mobileMenuBtn = document.createElement('button');
+mobileMenuBtn.className = 'mobile-menu-btn';
+mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+document.querySelector('.nav-brand').appendChild(mobileMenuBtn);
+
+mobileMenuBtn.addEventListener('click', () => {
+    const navLinks = document.querySelector('.nav-links');
+    navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+});
+
+// Intersection Observer for animations
+const observerOptions = {
+    threshold: 0.1
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('animate');
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.service-card, .section-header').forEach(el => {
+    observer.observe(el);
+});
+
+// Booking form handling
+const bookingForm = document.getElementById('booking-form');
+if (bookingForm) {
+    bookingForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(bookingForm);
+        const data = Object.fromEntries(formData);
+
+        try {
+            const response = await fetch('/api/bookings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                showMessage('Booking confirmed! Check your email for details.', 'success');
+                bookingForm.reset();
+            } else {
+                throw new Error('Booking failed');
+            }
+        } catch (error) {
+            showMessage('Error creating booking. Please try again.', 'error');
+        }
+    });
+}
+
+// Show message function
+function showMessage(message, type) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    messageDiv.textContent = message;
+    
+    const container = document.querySelector('.booking-container');
+    container.insertBefore(messageDiv, bookingForm);
+    
+    setTimeout(() => {
+        messageDiv.remove();
+    }, 5000);
+}
+
+// Initialize map
+function initMap() {
+    const shopLocation = { lat: 51.8905746, lng: 4.4918883 };
+    const map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 15,
+        center: shopLocation,
+    });
+    
+    const marker = new google.maps.Marker({
+        position: shopLocation,
+        map: map,
+        title: 'Kapsalon Adem'
+    });
+}
+
+// Load Google Maps API
+function loadGoogleMaps() {
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap`;
+    script.defer = true;
+    document.head.appendChild(script);
+}
