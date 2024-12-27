@@ -1,6 +1,6 @@
 [build]
-  publish = "/"
-  command = "npm run build"
+  publish = "./"
+  command = "# no build command needed"
 
 # API proxy
 [[redirects]]
@@ -15,47 +15,8 @@
     Access-Control-Allow-Credentials = "true"
   }
 
-# Error handling for API
-[[redirects]]
-  from = "/api/*"
-  to = "/error.html"
-  status = 404
-  force = false
-  conditions = {Response.status = ["404", "500"]}
-
-# Cache control for CSS files
-[[headers]]
-  for = "/*.css"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-    X-Content-Type-Options = "nosniff"
-
-[[headers]]
-  for = "/*.js"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-    X-Content-Type-Options = "nosniff"
-
-[[headers]]
-  for = "/*.html"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-
-# Admin routes
-[[redirects]]
-  from = "/admin"
-  to = "/admin.html"
-  status = 200
-
-[[redirects]]
-  from = "/admin/*"
-  to = "/admin.html"
-  status = 200
-
 # SPA fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = true
