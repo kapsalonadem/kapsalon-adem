@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Kapsalon Adem</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
     <style>
         :root {
             --primary-color: #FFD700;
@@ -30,14 +29,30 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             min-height: 100vh;
+        }
+
+        .login-container {
             display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .login-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
         }
 
         .dashboard-container {
-            display: flex;
+            display: none;
             flex-direction: row;
             width: 100%;
-            height: 100vh;
+            min-height: 100vh;
         }
 
         .sidebar {
@@ -49,30 +64,12 @@
             flex-direction: column;
             position: fixed;
             height: 100vh;
-            transition: all 0.3s ease;
         }
 
-        .sidebar-header {
-            text-align: center;
-            padding: 1rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 1rem;
-        }
-
-        .sidebar-header img {
-            width: 80px;
-            margin-bottom: 0.5rem;
-        }
-
-        .sidebar-nav ul {
-            list-style: none;
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
             flex-grow: 1;
-            padding: 0;
-            margin: 0;
-        }
-
-        .sidebar-nav li {
-            margin-bottom: 0.5rem;
         }
 
         .nav-link {
@@ -83,12 +80,11 @@
             text-decoration: none;
             border-radius: 6px;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .nav-link i {
             margin-right: 0.75rem;
-            width: 20px;
-            text-align: center;
         }
 
         .nav-link:hover, .nav-link.active {
@@ -96,27 +92,12 @@
             color: var(--secondary-color);
         }
 
-        .main-content {
-            margin-left: 250px;
-            padding: 2rem;
-            width: calc(100% - 250px);
-        }
-
-        .dashboard-header {
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header-left {
-            font-size: 1.5rem;
-            color: var(--secondary-color);
-        }
-
-        .header-right {
-            font-size: 1rem;
-            color: var(--text-color);
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .stats-grid {
@@ -128,105 +109,31 @@
 
         .stat-card {
             background: white;
-            border-radius: 8px;
             padding: 1.5rem;
+            border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
+            text-align: center;
         }
 
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .stat-info h3 {
-            font-size: 1.75rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-info p {
-            color: #666;
-            font-size: 0.875rem;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        table {
+        .appointments-list {
             width: 100%;
             border-collapse: collapse;
             margin-top: 1rem;
         }
 
-        th, td {
+        .appointments-list th,
+        .appointments-list td {
             padding: 1rem;
             text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-        }
-
-        tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 50px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .status-confirmed {
-            background-color: rgba(40, 167, 69, 0.1);
-            color: var(--success-color);
-        }
-
-        .status-pending {
-            background-color: rgba(255, 193, 7, 0.1);
-            color: var(--warning-color);
-        }
-
-        .status-cancelled {
-            background-color: rgba(220, 53, 69, 0.1);
-            color: var(--danger-color);
-        }
-
-        .action-btn {
-            padding: 0.5rem;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .edit-btn {
-            background-color: var(--warning-color);
-            color: white;
-        }
-
-        .delete-btn {
-            background-color: var(--danger-color);
-            color: white;
+            border-bottom: 1px solid #ddd;
         }
 
         .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
+            padding: 0.5rem 1rem;
             border: none;
-            font-weight: 500;
+            border-radius: 4px;
             cursor: pointer;
+            font-weight: 500;
             transition: all 0.3s ease;
         }
 
@@ -235,337 +142,393 @@
             color: var(--secondary-color);
         }
 
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .setup-instructions {
-            margin-bottom: 2rem;
-        }
-
-        .setup-steps {
-            margin-top: 1rem;
-        }
-
-        .setup-steps ol {
-            padding-left: 1rem;
-        }
-
-        .setup-steps li {
-            margin-bottom: 0.5rem;
-        }
-
-        .env-example {
-            margin-top: 1rem;
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 6px;
-        }
-
-        .setup-btn {
-            background-color: var(--primary-color);
-            color: var(--secondary-color);
-        }
-
-        .logout-btn {
+        .btn-danger {
             background-color: var(--danger-color);
             color: white;
         }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                z-index: 1000;
-            }
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
 
-            .sidebar.active {
-                transform: translateX(0);
-            }
+        .form-group {
+            margin-bottom: 1rem;
+        }
 
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-                padding: 1rem;
-            }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
 
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
 
-            .hamburger {
-                display: block;
-                position: fixed;
-                top: 1rem;
-                left: 1rem;
-                z-index: 1001;
-                background-color: var(--secondary-color);
-                color: white;
-                padding: 0.5rem;
-                border-radius: 4px;
-                cursor: pointer;
-            }
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
     </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <img src="/assets/images/logo.png" alt="Kapsalon Adem Logo" class="logo">
-                <button class="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
+    <!-- Login Form -->
+    <div class="login-container" id="loginContainer">
+        <form class="login-form" id="loginForm">
+            <h2 style="margin-bottom: 1.5rem; text-align: center;">Admin Login</h2>
+            <div id="loginAlert" style="display: none;" class="alert"></div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
             </div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li>
-                        <a href="#dashboard" class="nav-link active">
-                            <i class="fas fa-home"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#bookings" class="nav-link">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span>Bookings</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#services" class="nav-link">
-                            <i class="fas fa-cut"></i>
-                            <span>Services</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#settings" class="nav-link">
-                            <i class="fas fa-cog"></i>
-                            <span>Settings</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" id="logoutBtn" class="nav-link">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Logout</span>
-                        </a>
-                    </li>
-                </ul>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+        </form>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard-container" id="dashboardContainer">
+        <aside class="sidebar">
+            <div style="text-align: center; padding: 1rem 0; margin-bottom: 1rem;">
+                <h2>Admin Panel</h2>
+            </div>
+            <nav>
+                <div class="nav-link active" data-section="overview">
+                    <i class="fas fa-chart-line"></i>
+                    Overview
+                </div>
+                <div class="nav-link" data-section="appointments">
+                    <i class="fas fa-calendar-alt"></i>
+                    Appointments
+                </div>
+                <div class="nav-link" data-section="services">
+                    <i class="fas fa-cut"></i>
+                    Services
+                </div>
+                <div class="nav-link" data-section="settings">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </div>
+                <div class="nav-link" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </div>
             </nav>
         </aside>
 
         <main class="main-content">
-            <div class="setup-instructions" style="display: none;">
-                <h2>Email Setup Instructions</h2>
-                <div class="setup-steps">
-                    <h3>Option 1: Using Gmail Password (Less Secure)</h3>
-                    <ol>
-                        <li>Go to <a href="https://myaccount.google.com/security" target="_blank">Google Account Settings</a></li>
-                        <li>Scroll down to "Less secure app access"</li>
-                        <li>Turn ON "Allow less secure apps"</li>
-                        <li>Update your .env file with your Gmail password</li>
-                    </ol>
-
-                    <h3>Option 2: Using App Password (Recommended)</h3>
-                    <ol>
-                        <li>Go to <a href="https://myaccount.google.com/security" target="_blank">Google Account Settings</a></li>
-                        <li>Enable "2-Step Verification" if not already enabled</li>
-                        <li>Scroll down to "App passwords"</li>
-                        <li>Click "Create new app password"</li>
-                        <li>Select "Other (Custom name)" and enter "Kapsalon Adem"</li>
-                        <li>Copy the 16-digit password</li>
-                        <li>Update your .env file with the app password</li>
-                    </ol>
-
-                    <div class="env-example">
-                        <h3>Example .env file:</h3>
-                        <pre>
-EMAIL_USER=kapsalonadem@gmail.com
-EMAIL_PASSWORD=your_password_here
-                        </pre>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="dashboard-header">
-                <div class="header-left">
-                    <h1>Dashboard</h1>
-                </div>
-                <div class="header-right">
-                    <span class="admin-name">Welcome, <span id="adminUsername">Admin</span></span>
-                </div>
-                <div class="header-actions">
-                    <button id="showSetupBtn" class="btn setup-btn">
-                        <i class="fas fa-cog"></i> Email Setup
-                    </button>
-                    <button id="logoutBtn" class="btn logout-btn">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                </div>
-            </div>
-
-            <div class="dashboard-content">
+            <!-- Overview Section -->
+            <section id="overview" class="dashboard-section">
+                <h2>Dashboard Overview</h2>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <i class="fas fa-calendar-check"></i>
-                        <div class="stat-info">
-                            <h3>Today's Bookings</h3>
-                            <p id="todayBookings">0</p>
-                        </div>
+                        <h3>Today's Appointments</h3>
+                        <p id="todayAppointments">0</p>
                     </div>
                     <div class="stat-card">
-                        <i class="fas fa-clock"></i>
-                        <div class="stat-info">
-                            <h3>Pending</h3>
-                            <p id="pendingBookings">0</p>
-                        </div>
+                        <h3>Pending Appointments</h3>
+                        <p id="pendingAppointments">0</p>
                     </div>
                     <div class="stat-card">
-                        <i class="fas fa-check-circle"></i>
-                        <div class="stat-info">
-                            <h3>Completed</h3>
-                            <p id="completedBookings">0</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-users"></i>
-                        <div class="stat-info">
-                            <h3>Total Customers</h3>
-                            <p id="totalCustomers">0</p>
-                        </div>
+                        <h3>Total Revenue</h3>
+                        <p id="totalRevenue">€0</p>
                     </div>
                 </div>
+            </section>
 
-                <div class="recent-bookings">
-                    <h2>Recent Bookings</h2>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                    <th>Customer</th>
-                                    <th>Service</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recentBookingsTable">
-                                <!-- Bookings will be loaded here -->
-                            </tbody>
-                        </table>
+            <!-- Appointments Section -->
+            <section id="appointments" class="dashboard-section" style="display: none;">
+                <h2>Manage Appointments</h2>
+                <div class="card">
+                    <table class="appointments-list">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Client</th>
+                                <th>Service</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentsList">
+                            <!-- Appointments will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Services Section -->
+            <section id="services" class="dashboard-section" style="display: none;">
+                <h2>Manage Services</h2>
+                <div class="card">
+                    <form id="addServiceForm">
+                        <div class="form-group">
+                            <label>Service Name</label>
+                            <input type="text" id="serviceName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Price (€)</label>
+                            <input type="number" id="servicePrice" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Service</button>
+                    </form>
+                    <div id="servicesList" style="margin-top: 2rem;">
+                        <!-- Services will be loaded here -->
                     </div>
                 </div>
-            </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="dashboard-section" style="display: none;">
+                <h2>Settings</h2>
+                <div class="card">
+                    <form id="settingsForm">
+                        <div class="form-group">
+                            <label>Business Hours</label>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                                <input type="time" id="openingTime" required>
+                                <input type="time" id="closingTime" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Notifications</label>
+                            <input type="email" id="notificationEmail" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Settings</button>
+                    </form>
+                </div>
+            </section>
         </main>
     </div>
 
-    <script type="module">
-        import config from '../config.js';
+    <script>
+        // Global variables
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000/api'
+            : 'https://kapsalon-adem.onrender.com/api';
+
+        let authToken = localStorage.getItem('adminToken');
 
         // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            setupEventListeners();
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Login form submission
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+
+            // Navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.id !== 'logoutBtn') {
+                    link.addEventListener('click', () => switchSection(link.dataset.section));
+                }
+            });
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+
+            // Forms
+            document.getElementById('addServiceForm').addEventListener('submit', handleAddService);
+            document.getElementById('settingsForm').addEventListener('submit', handleSaveSettings);
+        }
+
+        // Authentication functions
         async function checkAuth() {
+            if (!authToken) {
+                showLoginForm();
+                return;
+            }
+
             try {
-                const token = localStorage.getItem('adminToken');
-                const response = await fetch(`${config.apiUrl}${config.adminEndpoints.checkAuth}`, {
-                    ...config.fetchOptions,
+                const response = await fetch(`${API_URL}/admin/verify`, {
                     headers: {
-                        ...config.defaultHeaders,
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${authToken}`
                     }
                 });
 
-                if (!response.ok) {
-                    window.location.href = '/admin/login';
-                    return false;
+                if (response.ok) {
+                    showDashboard();
+                    loadDashboardData();
+                } else {
+                    throw new Error('Authentication failed');
                 }
-
-                const data = await response.json();
-                document.getElementById('adminUsername').textContent = data.user.username;
-                return true;
             } catch (error) {
-                console.error('Auth check error:', error);
-                window.location.href = '/admin/login';
-                return false;
+                showLoginForm();
             }
         }
 
-        // Load dashboard data
-        async function loadDashboardData() {
-            if (!(await checkAuth())) return;
+        async function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
             try {
-                const token = localStorage.getItem('adminToken');
-                const response = await fetch(`${config.apiUrl}${config.adminEndpoints.dashboard}`, {
-                    ...config.fetchOptions,
-                    headers: {
-                        ...config.defaultHeaders,
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to load dashboard data');
-                }
-
-                const data = await response.json();
-                
-                // Update stats
-                document.getElementById('todayBookings').textContent = data.todayBookings;
-                document.getElementById('pendingBookings').textContent = data.pendingBookings;
-                document.getElementById('completedBookings').textContent = data.completedBookings;
-                document.getElementById('totalCustomers').textContent = data.totalCustomers;
-
-                // Update recent bookings table
-                const tbody = document.getElementById('recentBookingsTable');
-                tbody.innerHTML = data.recentBookings.map(booking => `
-                    <tr>
-                        <td>${new Date(booking.date).toLocaleDateString()}</td>
-                        <td>${booking.time}</td>
-                        <td>${booking.customerName}</td>
-                        <td>${booking.service}</td>
-                        <td><span class="status-badge ${booking.status.toLowerCase()}">${booking.status}</span></td>
-                        <td>
-                            <button class="action-btn edit-btn" onclick="editBooking('${booking.id}')">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="action-btn delete-btn" onclick="deleteBooking('${booking.id}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
-
-            } catch (error) {
-                console.error('Dashboard data error:', error);
-                alert('Error loading dashboard data. Please try again.');
-            }
-        }
-
-        // Handle logout
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-            try {
-                const response = await fetch(`${config.apiUrl}${config.adminEndpoints.logout}`, {
+                const response = await fetch(`${API_URL}/admin/login`, {
                     method: 'POST',
-                    ...config.fetchOptions
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
                 });
 
-                localStorage.removeItem('adminToken');
-                window.location.href = '/admin/login';
+                const data = await response.json();
+
+                if (response.ok) {
+                    authToken = data.token;
+                    localStorage.setItem('adminToken', authToken);
+                    showDashboard();
+                    loadDashboardData();
+                } else {
+                    showAlert('loginAlert', 'Invalid credentials', 'danger');
+                }
+            } catch (error) {
+                showAlert('loginAlert', 'Login failed. Please try again.', 'danger');
+            }
+        }
+
+        async function handleLogout() {
+            try {
+                await fetch(`${API_URL}/admin/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
             } catch (error) {
                 console.error('Logout error:', error);
             }
-        });
+
+            localStorage.removeItem('adminToken');
+            authToken = null;
+            showLoginForm();
+        }
+
+        // Dashboard functions
+        async function loadDashboardData() {
+            await Promise.all([
+                loadAppointments(),
+                loadServices(),
+                loadSettings()
+            ]);
+        }
+
+        async function loadAppointments() {
+            try {
+                const response = await fetch(`${API_URL}/appointments`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const appointments = await response.json();
+                updateAppointmentsTable(appointments);
+                updateDashboardStats(appointments);
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+            }
+        }
+
+        function updateAppointmentsTable(appointments) {
+            const tbody = document.getElementById('appointmentsList');
+            tbody.innerHTML = appointments.map(appointment => `
+                <tr>
+                    <td>${new Date(appointment.date).toLocaleDateString()}</td>
+                    <td>${appointment.time}</td>
+                    <td>${appointment.name}</td>
+                    <td>${appointment.service}</td>
+                    <td>${appointment.status}</td>
+                    <td>
+                        <button class="btn btn-success btn-sm" onclick="updateAppointmentStatus('${appointment._id}', 'confirmed')">
+                            Confirm
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="updateAppointmentStatus('${appointment._id}', 'cancelled')">
+                            Cancel
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function updateAppointmentStatus(id, status) {
+            try {
+                const response = await fetch(`${API_URL}/appointments/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+
+                if (response.ok) {
+                    loadAppointments();
+                }
+            } catch (error) {
+                console.error('Error updating appointment:', error);
+            }
+        }
+
+        // UI Helper functions
+        function showLoginForm() {
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('dashboardContainer').style.display = 'none';
+        }
+
+        function showDashboard() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('dashboardContainer').style.display = 'flex';
+        }
+
+        function switchSection(sectionId) {
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+        }
+
+        function showAlert(elementId, message, type) {
+            const alert = document.getElementById(elementId);
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
 
         // Initialize dashboard
-        window.addEventListener('load', loadDashboardData);
-
-        // Show setup instructions
-        document.getElementById('showSetupBtn').addEventListener('click', () => {
-            const setupInstructions = document.querySelector('.setup-instructions');
-            setupInstructions.style.display = setupInstructions.style.display === 'block' ? 'none' : 'block';
-        });
+        switchSection('overview');
     </script>
 </body>
 </html>

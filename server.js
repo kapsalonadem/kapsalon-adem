@@ -11,6 +11,7 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs').promises;
 const cookieParser = require('cookie-parser');
+const adminRoutes = require('./routes/admin');
 
 // Define MongoDB schemas
 const appointmentSchema = new mongoose.Schema({
@@ -73,6 +74,9 @@ app.use(helmet({
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.static('public'));
+
+// Admin routes
+app.use('/api/admin', adminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
