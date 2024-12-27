@@ -3,5 +3,11 @@
     "id": "1",
     "username": "abdullah",
     "password": "Dordtselaan44a"
+  },
+  {
+    "admin": {
+      "username": "kapsalonadem@gmail.com",
+      "password": "Dordtselaan44a"
+    }
   }
 ]

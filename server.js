@@ -460,36 +460,86 @@ setInterval(() => {
 
 // Email configuration
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        user: process.env.EMAIL_USER || 'kapsalonadem@gmail.com',
+        pass: process.env.EMAIL_PASSWORD
+    },
+    tls: {
+        rejectUnauthorized: false
+    }
+});
+
+// Test email connection
+transporter.verify(function(error, success) {
+    if (error) {
+        console.log('Email server error:', error);
+    } else {
+        console.log('Email server is ready to send messages');
     }
 });
 
 // Email template function
 function generateBookingEmail(booking) {
+    const formattedDate = new Date(booking.date).toLocaleDateString('nl-NL', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
     return {
-        subject: 'Booking Confirmation - Kapsalon Adem',
+        subject: 'Nieuwe Afspraak - Kapsalon Adem',
         html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #333;">Thank you for your booking!</h2>
-                <p>Dear ${booking.name},</p>
-                <p>Your appointment has been confirmed:</p>
+                <h2 style="color: #333;">Bedankt voor je reservering!</h2>
+                <p>Beste ${booking.name},</p>
+                <p>Je afspraak is bevestigd:</p>
                 <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
                     <p><strong>Service:</strong> ${booking.service}</p>
-                    <p><strong>Date:</strong> ${new Date(booking.date).toLocaleDateString()}</p>
-                    <p><strong>Time:</strong> ${booking.time}</p>
-                    <p><strong>Barber:</strong> ${booking.barber}</p>
+                    <p><strong>Datum:</strong> ${formattedDate}</p>
+                    <p><strong>Tijd:</strong> ${booking.time}</p>
+                    <p><strong>Kapper:</strong> ${booking.barber}</p>
                 </div>
-                <p><strong>Location:</strong> [Barbershop Address]</p>
-                <p>If you need to cancel or reschedule, please contact us at least 24 hours in advance.</p>
-                <p>Phone: [Phone Number]</p>
+                <p><strong>Locatie:</strong> Dordtselaan 44A, 3073GC Rotterdam</p>
+                <p>Als je de afspraak wilt annuleren of wijzigen, neem dan minimaal 24 uur van tevoren contact met ons op.</p>
+                <p>Telefoon: +31 6 24 27 70 70</p>
                 <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
                     <p style="color: #666; font-size: 12px;">
-                        This is an automated message, please do not reply to this email.
+                        Dit is een automatisch gegenereerd bericht, gelieve niet te antwoorden op deze e-mail.
                     </p>
                 </div>
+            </div>
+        `
+    };
+}
+
+// Admin notification email
+function generateAdminNotificationEmail(booking) {
+    const formattedDate = new Date(booking.date).toLocaleDateString('nl-NL', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
+    return {
+        subject: 'Nieuwe Boeking Ontvangen',
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #333;">Nieuwe Boeking Ontvangen</h2>
+                <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                    <p><strong>Klant:</strong> ${booking.name}</p>
+                    <p><strong>Email:</strong> ${booking.email}</p>
+                    <p><strong>Telefoon:</strong> ${booking.phone}</p>
+                    <p><strong>Service:</strong> ${booking.service}</p>
+                    <p><strong>Datum:</strong> ${formattedDate}</p>
+                    <p><strong>Tijd:</strong> ${booking.time}</p>
+                    <p><strong>Kapper:</strong> ${booking.barber}</p>
+                </div>
+                <p>Log in op het <a href="https://ademkapsalon.netlify.app/admin">admin dashboard</a> om deze boeking te beheren.</p>
             </div>
         `
     };
@@ -501,13 +551,22 @@ app.post('/api/bookings', async (req, res) => {
         const booking = new Appointment(req.body);
         await booking.save();
 
-        // Send confirmation email
-        const emailContent = generateBookingEmail(booking);
+        // Send confirmation email to customer
+        const customerEmail = generateBookingEmail(booking);
         await transporter.sendMail({
-            from: process.env.EMAIL_USER,
+            from: process.env.EMAIL_USER || 'kapsalonadem@gmail.com',
             to: booking.email,
-            subject: emailContent.subject,
-            html: emailContent.html
+            subject: customerEmail.subject,
+            html: customerEmail.html
+        });
+
+        // Send notification email to admin
+        const adminEmail = generateAdminNotificationEmail(booking);
+        await transporter.sendMail({
+            from: process.env.EMAIL_USER || 'kapsalonadem@gmail.com',
+            to: process.env.EMAIL_USER || 'kapsalonadem@gmail.com',
+            subject: adminEmail.subject,
+            html: adminEmail.html
         });
 
         res.status(201).json({ 

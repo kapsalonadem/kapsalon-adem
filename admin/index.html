@@ -240,6 +240,39 @@
             transform: translateY(-2px);
         }
 
+        .setup-instructions {
+            margin-bottom: 2rem;
+        }
+
+        .setup-steps {
+            margin-top: 1rem;
+        }
+
+        .setup-steps ol {
+            padding-left: 1rem;
+        }
+
+        .setup-steps li {
+            margin-bottom: 0.5rem;
+        }
+
+        .env-example {
+            margin-top: 1rem;
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+        }
+
+        .setup-btn {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        .logout-btn {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -323,14 +356,54 @@
         </aside>
 
         <main class="main-content">
-            <header class="dashboard-header">
+            <div class="setup-instructions" style="display: none;">
+                <h2>Email Setup Instructions</h2>
+                <div class="setup-steps">
+                    <h3>Option 1: Using Gmail Password (Less Secure)</h3>
+                    <ol>
+                        <li>Go to <a href="https://myaccount.google.com/security" target="_blank">Google Account Settings</a></li>
+                        <li>Scroll down to "Less secure app access"</li>
+                        <li>Turn ON "Allow less secure apps"</li>
+                        <li>Update your .env file with your Gmail password</li>
+                    </ol>
+
+                    <h3>Option 2: Using App Password (Recommended)</h3>
+                    <ol>
+                        <li>Go to <a href="https://myaccount.google.com/security" target="_blank">Google Account Settings</a></li>
+                        <li>Enable "2-Step Verification" if not already enabled</li>
+                        <li>Scroll down to "App passwords"</li>
+                        <li>Click "Create new app password"</li>
+                        <li>Select "Other (Custom name)" and enter "Kapsalon Adem"</li>
+                        <li>Copy the 16-digit password</li>
+                        <li>Update your .env file with the app password</li>
+                    </ol>
+
+                    <div class="env-example">
+                        <h3>Example .env file:</h3>
+                        <pre>
+EMAIL_USER=kapsalonadem@gmail.com
+EMAIL_PASSWORD=your_password_here
+                        </pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-header">
                 <div class="header-left">
                     <h1>Dashboard</h1>
                 </div>
                 <div class="header-right">
                     <span class="admin-name">Welcome, <span id="adminUsername">Admin</span></span>
                 </div>
-            </header>
+                <div class="header-actions">
+                    <button id="showSetupBtn" class="btn setup-btn">
+                        <i class="fas fa-cog"></i> Email Setup
+                    </button>
+                    <button id="logoutBtn" class="btn logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
 
             <div class="dashboard-content">
                 <div class="stats-grid">
@@ -487,6 +560,12 @@
 
         // Initialize dashboard
         window.addEventListener('load', loadDashboardData);
+
+        // Show setup instructions
+        document.getElementById('showSetupBtn').addEventListener('click', () => {
+            const setupInstructions = document.querySelector('.setup-instructions');
+            setupInstructions.style.display = setupInstructions.style.display === 'block' ? 'none' : 'block';
+        });
     </script>
 </body>
 </html>
