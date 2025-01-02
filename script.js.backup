@@ -193,6 +193,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize date picker
     initializeDatePicker();
     generateTimeSlots();
+    
+    // Fix language selection button
+    document.querySelectorAll('.lang-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            const lang = this.getAttribute('onclick').match(/\('([^']+)\)/)[1];
+            changeLanguage(lang);
+        });
+    });
 });
 
 function initMobileNav() {
@@ -423,4 +433,9 @@ function showNotification(message, type = 'info') {
             notification.remove();
         }, 300);
     }, 3000);
+}
+
+function changeLanguage(lang) {
+    // This function should be implemented to change the language
+    console.log(`Language changed to ${lang}`);
 }
