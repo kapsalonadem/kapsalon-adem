@@ -153,6 +153,15 @@ const failedBookingSchema = new mongoose.Schema({
 
 const FailedBooking = mongoose.model('FailedBooking', failedBookingSchema);
 
+// Working Hours Schema
+const workingHoursSchema = new mongoose.Schema({
+    day: String,
+    start: String,
+    end: String
+});
+
+const WorkingHours = mongoose.model('WorkingHours', workingHoursSchema);
+
 // Booking queue system
 const bookingQueue = {
     queue: new Map(),
@@ -550,8 +559,8 @@ function generateAdminNotificationEmail(booking) {
 
 app.post('/api/bookings', async (req, res) => {
     try {
-        const { name, email, phone, service, date, time } = req.body;
-        const booking = new Appointment({ name, email, phone, service, date, time });
+        const { name, email, phone, service, date, time, barber } = req.body;
+        const booking = new Appointment({ name, email, phone, service, date, time, barber });
         await booking.save();
 
         // Send confirmation email
@@ -559,12 +568,12 @@ app.post('/api/bookings', async (req, res) => {
             to: email,
             from: process.env.EMAIL_USER,
             subject: 'Booking Confirmation',
-            text: `Dear ${name}, your booking for ${service} on ${date} at ${time} is confirmed.`,
-            html: `<strong>Dear ${name},</strong><br>Your booking for ${service} on ${date} at ${time} is confirmed.`
+            text: `Dear ${name}, your booking for ${service} with ${barber} on ${date} at ${time} is confirmed.`,
+            html: `<strong>Dear ${name},</strong><br>Your booking for ${service} with ${barber} on ${date} at ${time} is confirmed.`
         };
         await sgMail.send(msg);
 
-        res.status(200).json({ message: 'Booking successful', booking });
+        res.status(201).json({ message: 'Booking successful', booking });
     } catch (error) {
         res.status(500).json({ message: 'Error creating booking', error: error.message });
     }
@@ -766,6 +775,96 @@ const sendEmail = async (options) => {
         }
     }
 };
+
+// Booking Management Endpoints
+app.get('/api/bookings', authenticateAdmin, async (req, res) => {
+    try {
+        const bookings = await Appointment.find();
+        res.json(bookings);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching bookings', error: error.message });
+    }
+});
+
+app.put('/api/bookings/:id', authenticateAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedBooking = await Appointment.findByIdAndUpdate(id, req.body, { new: true });
+        res.json(updatedBooking);
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating booking', error: error.message });
+    }
+});
+
+app.delete('/api/bookings/:id', authenticateAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Appointment.findByIdAndDelete(id);
+        res.json({ message: 'Booking deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting booking', error: error.message });
+    }
+});
+
+// Service Management Endpoints
+app.get('/api/services', authenticateAdmin, async (req, res) => {
+    try {
+        const services = await Service.find();
+        res.json(services);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching services', error: error.message });
+    }
+});
+
+app.post('/api/services', authenticateAdmin, async (req, res) => {
+    try {
+        const service = new Service(req.body);
+        await service.save();
+        res.status(201).json(service);
+    } catch (error) {
+        res.status(500).json({ message: 'Error adding service', error: error.message });
+    }
+});
+
+app.put('/api/services/:id', authenticateAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedService = await Service.findByIdAndUpdate(id, req.body, { new: true });
+        res.json(updatedService);
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating service', error: error.message });
+    }
+});
+
+app.delete('/api/services/:id', authenticateAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Service.findByIdAndDelete(id);
+        res.json({ message: 'Service deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting service', error: error.message });
+    }
+});
+
+// Working Hours Management Endpoints
+app.get('/api/working-hours', authenticateAdmin, async (req, res) => {
+    try {
+        const workingHours = await WorkingHours.find();
+        res.json(workingHours);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching working hours', error: error.message });
+    }
+});
+
+app.put('/api/working-hours/:id', authenticateAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedHours = await WorkingHours.findByIdAndUpdate(id, req.body, { new: true });
+        res.json(updatedHours);
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating working hours', error: error.message });
+    }
+});
 
 // Start server
 app.listen(PORT, () => {

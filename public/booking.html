@@ -6,6 +6,7 @@
     <title>Booking - Kapsalon Adem</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar">
@@ -54,9 +55,15 @@
             </div>
 
             <div class="form-group">
-                <label for="date">Date</label>
-                <input type="date" id="date" name="date" required>
+                <label for="barber">Barber</label>
+                <select id="barber" name="barber">
+                    <option value="">Select a barber</option>
+                    <option value="john">John</option>
+                    <option value="jane">Jane</option>
+                </select>
             </div>
+
+            <div id="calendar"></div>
 
             <div class="form-group">
                 <label for="time">Time</label>
@@ -76,6 +83,20 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
     <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                selectable: true,
+                dateClick: function(info) {
+                    alert('Selected date: ' + info.dateStr);
+                }
+            });
+            calendar.render();
+        });
+    </script>
 </body>
 </html>
