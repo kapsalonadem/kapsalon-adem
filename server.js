@@ -11,7 +11,6 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs').promises;
 const cookieParser = require('cookie-parser');
-const adminRoutes = require('./routes/admin');
 
 // Define MongoDB schemas
 const appointmentSchema = new mongoose.Schema({
@@ -75,7 +74,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Admin routes
+const adminRoutes = require('./routes/admin');
 app.use('/api/admin', adminRoutes);
 
 // Health check endpoint
@@ -549,46 +548,27 @@ function generateAdminNotificationEmail(booking) {
     };
 }
 
-// Update the booking route to include email confirmation
 app.post('/api/bookings', async (req, res) => {
     try {
-        const booking = new Appointment(req.body);
+        const { name, email, phone, service, date, time } = req.body;
+        const booking = new Appointment({ name, email, phone, service, date, time });
         await booking.save();
 
-        // Send confirmation email to customer
-        const customerEmail = generateBookingEmail(booking);
-        await transporter.sendMail({
-            from: process.env.EMAIL_USER || 'kapsalonadem@gmail.com',
-            to: booking.email,
-            subject: customerEmail.subject,
-            html: customerEmail.html
-        });
+        // Send confirmation email
+        const msg = {
+            to: email,
+            from: process.env.EMAIL_USER,
+            subject: 'Booking Confirmation',
+            text: `Dear ${name}, your booking for ${service} on ${date} at ${time} is confirmed.`,
+            html: `<strong>Dear ${name},</strong><br>Your booking for ${service} on ${date} at ${time} is confirmed.`
+        };
+        await sgMail.send(msg);
 
-        // Send notification email to admin
-        const adminEmail = generateAdminNotificationEmail(booking);
-        await transporter.sendMail({
-            from: process.env.EMAIL_USER || 'kapsalonadem@gmail.com',
-            to: process.env.EMAIL_USER || 'kapsalonadem@gmail.com',
-            subject: adminEmail.subject,
-            html: adminEmail.html
-        });
-
-        res.status(201).json({ 
-            message: 'Booking confirmed! Check your email for details.',
-            booking 
-        });
+        res.status(200).json({ message: 'Booking successful', booking });
     } catch (error) {
-        console.error('Booking error:', error);
-        res.status(500).json({ 
-            message: 'Error creating booking',
-            error: error.message 
-        });
+        res.status(500).json({ message: 'Error creating booking', error: error.message });
     }
 });
-
-// Admin routes
-const adminRoutes = require('./routes/admin');
-app.use('/api/admin', adminRoutes);
 
 // Serve admin dashboard
 app.get('/admin', authenticateAdmin, (req, res) => {
