@@ -154,10 +154,8 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
             throw new Error(result.message || 'Booking failed');
         }
     } catch (error) {
-        console.error('Booking error:', error);
-        alert(error.message || 'Unable to process booking. Please try again later.');
-    } finally {
-        resetLoading();
+        console.error('Error submitting booking:', error);
+        alert('There was an error processing your booking. Please try again later.');
     }
 });
 
